@@ -4,26 +4,32 @@
 
 namespace sitcmalloc {
 
-Span* PageHeap::search(size_t pages) {
+bool PageHeap::search(size_t pages, Span& span) {
 
 }
 
-Span* PageHeap::allocFromSystem(size_t pages) {
-    size_t ask = pages > MIN_ALLOCATED_PAGES ? pages : MIN_ALLOCATED_PAGES;
+bool PageHeap::allocFromSystem(size_t pages, Span&) {
+	if (pages < MIN_ALLOCATED_PAGES) {
+    	pages = MIN_ALLOCATED_PAGES;
+	}
     void* ptr = sys_alloc(pagesToBytes(pages));
     if (!ptr) {
-        return NULL;
+        return false;
     }
 
-
-
+    Span.init(ptr, pages);
+    return true;
 }
 
-Span* PageHeap::alloc(size_t pages) {
-    Span* result = search(pages);
+bool PageHeap::alloc(size_t pages, Span& span) {
+    if (search(pages, span)) {
+    	return true;
+    }
+
+    
 }
 
-void PageHeap::free(Span* span) {
+bool PageHeap::free(Span& span) {
 
 }
 

@@ -13,23 +13,17 @@ namespace sitcmalloc {
 class PageHeap {
 public:
 
-    static const size_t PAGE_SHIFT = 13;
-    static const size_t MAX_PAGES = 1 << (20 - PAGE_SHIFT);
-    static const size_t MIN_ALLOCATED_PAGES = MAX_PAGES;
 
     /**
      *
      */
-    Span* alloc(size_t);
+    bool alloc(size_t, Span&);
 
     /**
      *
      */
-    void free(Span*);
+    bool free(Span&);
 
-    static inline size_t pagesToBytes(size_t pages) {
-        return pages << PAGE_SHIFT;
-    }
 
     static PageHeap& instance() {
         static PageHeap result;
@@ -42,8 +36,8 @@ private:
     PageHeap(PageHeap&);
     PageHeap& operator=(const PageHeap&);
 
-    Span* search(size_t);
-    Span* allocFromSystem(size_t);
+    bool search(size_t, Span&);
+    bool allocFromSystem(size_t, Span&);
 
 };
 
