@@ -5,7 +5,7 @@
  * @license GNU GPL v2
  */
 
-#include <src/sys_malloc.h>
+#include <src/sys_alloc.h>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <cstring>
@@ -13,7 +13,7 @@
 using namespace std;
 using namespace sitcmalloc;
 
-TEST(sys_malloc_test, testSmallMalloc) {
+TEST(sys_alloc_test, testSmallAlloc) {
     const char* hello = "hello world!";
     const size_t count = strlen(hello);
     char *p = (char *) sys_alloc(count);
@@ -22,7 +22,7 @@ TEST(sys_malloc_test, testSmallMalloc) {
     EXPECT_FALSE(sys_free((void*)p, count));
 }
 
-TEST(sys_malloc_test, testPageMalloc) {
+TEST(sys_alloc_test, testPageAlloc) {
     const size_t count = getpagesize()*2;
     char *p = (char *) sys_alloc(count);
     for (int i = 0; i < count; ++i) {

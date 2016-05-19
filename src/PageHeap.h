@@ -3,6 +3,7 @@
 
 #include <stddef.h> // for size_t, NULL, ptrdiff_t
 #include "Span.h"
+#include "common.h"
 
 namespace sitcmalloc {
 
@@ -17,12 +18,12 @@ public:
     /**
      *
      */
-    bool alloc(size_t, Span&);
+    Span* alloc(size_t);
 
     /**
      *
      */
-    bool free(Span&);
+    void free(Span*);
 
 
     static PageHeap& instance() {
@@ -30,16 +31,21 @@ public:
         return result;
     }
 
-
 private:
     PageHeap() {}
     PageHeap(PageHeap&);
     PageHeap& operator=(const PageHeap&);
 
-    bool search(size_t, Span&);
-    bool allocFromSystem(size_t, Span&);
+    Span* search(size_t);
+    Span* allocFromSystem(size_t);
+    void merge(Span*);
+
+    Span m_pageSpans[MAX_PAGES];
+    Span m_span;
+    Span m_tail;
 
 };
+
 
 
 }  // namespace sitcmalloc

@@ -2,8 +2,10 @@
 #define SITCMALLOC_COMMON_H
 
 #include <stddef.h> // for size_t, NULL, ptrdiff_t
-
+#include <assert.h>
 namespace sitcmalloc {
+
+#define ASSERT(x) assert((x))
 
 static const size_t PAGE_SHIFT = 13;
 static const size_t MAX_PAGES = 1 << (20 - PAGE_SHIFT);

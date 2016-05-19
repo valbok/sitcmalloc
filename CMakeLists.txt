@@ -15,6 +15,7 @@ else()
 endif()
 
 include_directories(.)
+include_directories(src)
 include_directories(lib/gtest)
 include_directories(lib/gtest/include)
 
