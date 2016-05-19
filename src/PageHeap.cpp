@@ -28,11 +28,23 @@ Span* PageHeap::search(size_t pages) {
             merge(span);
             merge(result);
 
-            break;
+            return result;
         }
     }
 
-    return result;
+    for (Span* span = m_span.vNext(); span != nullptr; span = span->vNext()) {
+        if (span->pages() >= pages) {
+            if (!result
+                || span->pages() < result->pages()
+                || (span->pages() == result->pages() && span->data() < result->data())
+                ) {
+                result = span;
+                ASSERT(!result->inUse());
+            }
+        }
+    }
+
+    return result ? result->carve(pages) : nullptr;
 }
 
 void PageHeap::merge(Span* span) {

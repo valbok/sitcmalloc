@@ -60,3 +60,9 @@ TEST(PageHeapTest, testSeqAlloc) {
     EXPECT_EQ(s3, s4->pNext());
 }
 
+TEST(PageHeapTest, testLargeAllocPages) {
+    const int pages = 200;
+
+    Span* s1 = PageHeap::instance().alloc(pages);
+    EXPECT_EQ(pages, s1->pages());
+}

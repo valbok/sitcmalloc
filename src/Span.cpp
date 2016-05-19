@@ -131,6 +131,7 @@ Span* Span::carve(size_t pages) {
     Span* result = this;
     size_t delta = m_pages - pages;
     if (delta) {
+        cout << "delta " << delta << endl;
         char* ptr = reinterpret_cast<char*>(this);
         result = Span::create(ptr + pagesToBytes(delta), pages);
         ASSERT(result);
