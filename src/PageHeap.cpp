@@ -18,14 +18,14 @@ Span* PageHeap::allocFromSystem(size_t pages) {
 Span* PageHeap::search(size_t pages) {
     Span* result = nullptr;
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
-        Span* span = &m_pageSpans[i];
-        if (!span->vEmpty()) {
-            Span* data = span->vNext();
+        Span* root = &m_pageSpans[i];
+        if (!root->vEmpty()) {
+            Span* span = root->vNext();
 
-            data->vRemove();
-            result = data->carve(pages);
+            span->vRemove();
+            result = span->carve(pages);
 
-            merge(data);
+            merge(span);
             merge(result);
 
             break;
