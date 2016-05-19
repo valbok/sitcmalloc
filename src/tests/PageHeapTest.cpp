@@ -29,6 +29,7 @@ TEST(PageHeapTest, testLessMinAllocPages) {
     EXPECT_EQ(pages, s1->pages());
     EXPECT_EQ(pages, s2->pages());
     Span* s3 = PageHeap::instance().alloc(pages);
+    Span* s4 = PageHeap::instance().alloc(MIN_ALLOCATED_PAGES);
 
     EXPECT_TRUE(s1 != nullptr);
     EXPECT_TRUE(s2 != nullptr);
@@ -36,6 +37,7 @@ TEST(PageHeapTest, testLessMinAllocPages) {
     EXPECT_EQ(pages, s1->pages());
     EXPECT_EQ(pages, s2->pages());
     EXPECT_EQ(pages, s3->pages());
+    EXPECT_EQ(MIN_ALLOCATED_PAGES, s4->pages());
 }
 
 TEST(PageHeapTest, testSeqAlloc) {
