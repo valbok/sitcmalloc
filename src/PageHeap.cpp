@@ -19,7 +19,7 @@ Span* PageHeap::search(size_t pages) {
     Span* result = nullptr;
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
         Span* span = &m_pageSpans[i];
-        if (!span->empty()) {
+        if (!span->vEmpty()) {
             Span* data = span->vNext();
 
             data->vRemove();
