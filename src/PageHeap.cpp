@@ -1,6 +1,6 @@
 #include "PageHeap.h"
 #include "sys_alloc.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <iostream>
 using namespace std;
 namespace sitcmalloc {
@@ -17,20 +17,17 @@ Span* PageHeap::allocFromSystem(size_t pages) {
 
 Span* PageHeap::search(size_t pages) {
     Span* result = nullptr;
-    cout << "SEACHING " << pages << endl;
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
         Span* span = &m_pageSpans[i];
         if (!span->empty()) {
-            Span* data = span->dataSpan();
-            cout << "   FOUND " << i+1 << " pages " << "data->pages="<<data->pages() << endl;
-            data->removeData();
-            cout << "   removedData empty=" << span->empty() <<"=" << span->dataSpan() <<endl;
+            Span* data = span->vNext();
+
+            data->vRemove();
             result = data->carve(pages);
 
             merge(data);
             merge(result);
 
-            cout << "search result pages data=" << data->pages() << ":result="<<result->pages() << endl;
             break;
         }
     }
@@ -43,38 +40,27 @@ void PageHeap::merge(Span* span) {
         return;
     }
     if (span->pages() <= MAX_PAGES) {
-        m_pageSpans[span->pages() - 1].prependToData(span);
-        
-        /*Span * s = m_pageSpans[span->pages() - 1].nextSpan();
-        while (s) {
-            cout << s << endl;
-            s = s->nextSpan();
-        }*/
+        m_pageSpans[span->pages() - 1].vPrepend(span);
     } else {
-        m_span.prependToData(span);
+        m_span.vPrepend(span);
     }
 }
 
 Span* PageHeap::alloc(size_t pages) {
-    cout << "ALLOC\n";
     Span* result = search(pages);
     if (!result) {
-        cout << "NOT FOUND allocating from system\n";
         result = allocFromSystem(pages);
-        cout << " ALLOCATED " << result << endl;;
         if (result) {
-            m_tail.prependToLeft(result);
-        
-            merge(result);
-            cout << "    trying to search again\n";
-            result = search(pages);
-            cout << "alloc result pages " << result <<":"<<result->pages() << endl;
-        }
+            m_tail.pPrependToLeft(result);
 
+            merge(result);
+            result = search(pages);
+        }
     }
+
     if (result) {
         result->use();
-        result->removeData();
+        result->vRemove();
     }
 
     return result;

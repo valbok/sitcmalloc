@@ -24,7 +24,7 @@ public:
         result->m_prev = result->m_next = nullptr;
         result->m_data = nullptr;
         result->m_pages = pages;
-        return result; 
+        return result;
     }
 
     inline size_t pages(size_t pages = 0) {
@@ -38,11 +38,11 @@ public:
         return &m_data;
     }
 
-    Span* next() const {
+    Span* pNext() const {
         return m_next;
     }
 
-    Span* prev() const {
+    Span* pPrev() const {
         return m_prev;
     }
 
@@ -58,11 +58,11 @@ public:
         return m_inUse;
     }
 
-    void prependToLeft(Span* span) {
+    void pPrependToLeft(Span* span) {
         ASSERT(span);
         ASSERT(span->m_next == nullptr);
         ASSERT(span->m_prev == nullptr);
-        
+
         span->m_prev = m_prev;
         span->m_next = this;
         if (m_prev) {
@@ -72,11 +72,11 @@ public:
         m_prev = span;
     }
 
-    void prepend(Span* span) {
+    void pPrepend(Span* span) {
         ASSERT(span);
         ASSERT(span->m_next == nullptr);
         ASSERT(span->m_prev == nullptr);
-        
+
         span->m_next = m_next;
         span->m_prev = this;
         if (m_next) {
@@ -86,7 +86,7 @@ public:
         m_next = span;
     }
 
-    void prependToData(Span* span) {
+    void vPrepend(Span* span) {
         ASSERT(span);
         ASSERT(!span->inUse());
 
@@ -94,7 +94,7 @@ public:
         Span** prevPtr = prevData();
         Span* next = *nextPtr;
         Span* prev = *prevPtr;
-        
+
         *span->nextData() = next;
         *span->prevData() = this;
         if (next) {
@@ -103,7 +103,7 @@ public:
         *nextPtr = span;
     }
 
-    void removeData() {
+    void vRemove() {
         Span** nextPtr = nextData();
         Span** prevPtr = prevData();
         Span* next = *nextPtr;
@@ -120,8 +120,12 @@ public:
         *prevPtr = nullptr;
     }
 
-    Span* dataSpan() {
+    Span* vNext() {
         return *nextData();
+    }
+
+    Span* vPrev() {
+        return *prevData();
     }
 
     bool empty() {
@@ -136,7 +140,7 @@ public:
             result = Span::create(ptr + pagesToBytes(delta), pages);
             ASSERT(result);
 
-            prepend(result);
+            pPrepend(result);
 
             m_pages = delta;
         }
@@ -144,7 +148,7 @@ public:
         return result;
     }
 
-    void remove() {
+    void pRemove() {
         if (m_prev) {
             m_prev->m_next = m_next;
         }
