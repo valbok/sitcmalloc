@@ -21,28 +21,28 @@ public:
     void* data();
 
     Span* pNext() const;
-
     Span* pPrev() const;
-    void use();
 
+    void use();
     void free();
+
     bool inUse() const;
 
     void pPrependToLeft(Span* span);
     void pPrepend(Span* span);
-
-    void vPrepend(Span* span);
-
-    void vRemove();
+    void pRemove();
 
     Span* vNext();
     Span* vPrev();
 
-    bool empty();
+
+    void vPrepend(Span* span);
+    void vRemove();
+
+    bool vEmpty();
 
     Span* carve(size_t pages);
 
-    void pRemove();
 private:
 
     Span** nextData();

@@ -123,7 +123,7 @@ Span* Span::vPrev() {
     return *prevData();
 }
 
-bool Span::empty() {
+bool Span::vEmpty() {
     return m_data == nullptr;
 }
 
