@@ -89,46 +89,36 @@ void Span::vPrepend(Span* span) {
     ASSERT(span);
     ASSERT(!span->inUse());
 
-    Span** nextPtr = nextData();
-    Span** prevPtr = prevData();
-    Span* next = *nextPtr;
-    Span* prev = *prevPtr;
-
-    *span->nextData() = next;
-    *span->prevData() = this;
-    if (next) {
-        *next->prevData() = span;
+    span->m_vNext = m_vNext;
+    span->m_vPrev = this;
+    if (m_vNext) {
+        m_vNext->m_vPrev = span;
     }
-    *nextPtr = span;
+    m_vNext = span;
 }
 
 void Span::vRemove() {
-    Span** nextPtr = nextData();
-    Span** prevPtr = prevData();
-    Span* next = *nextPtr;
-    Span* prev = *prevPtr;
-
-    if (next) {
-        *next->prevData() = prev;
+    if (m_vNext) {
+        m_vNext->m_vPrev = m_vPrev;
     }
-    if (prev) {
-        *prev->nextData() = next;
+    if (m_vPrev) {
+        m_vPrev->m_vNext = m_vNext;
     }
 
-    *nextPtr = nullptr;
-    *prevPtr = nullptr;
+    m_vNext = nullptr;
+    m_vPrev = nullptr;
 }
 
-Span* Span::vNext() {
-    return *nextData();
+Span* Span::vNext() const {
+    return m_vNext;
 }
 
-Span* Span::vPrev() {
-    return *prevData();
+Span* Span::vPrev() const {
+    return m_vPrev;
 }
 
-bool Span::vEmpty() {
-    return m_data == nullptr;
+bool Span::vEmpty() const {
+    return m_vPrev == nullptr && m_vNext == nullptr;
 }
 
 Span* Span::carve(size_t pages) {
@@ -157,14 +147,6 @@ void Span::pRemove() {
     }
     m_pPrev = nullptr;
     m_pNext = nullptr;
-}
-
-Span** Span::nextData() {
-    return reinterpret_cast<Span**>(data());
-}
-
-Span** Span::prevData() {
-    return reinterpret_cast<Span**>((Span*)data() + 1);
 }
 
 

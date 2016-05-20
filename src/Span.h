@@ -10,7 +10,7 @@ namespace sitcmalloc {
  */
 class Span {
 public:
-    Span();
+    Span(size_t pages = 0);
 
     static Span* create(void* p, size_t pages);
 
@@ -19,34 +19,28 @@ public:
 
     Span* pNext() const;
     Span* pPrev() const;
-
-    void use();
-    void free();
-
-    bool inUse() const;
-
     void pPrependToLeft(Span* span);
     void pPrepend(Span* span);
     void pRemove();
 
-    Span* vNext();
-    Span* vPrev();
-
-
+    Span* vNext() const;
+    Span* vPrev() const;
     void vPrepend(Span* span);
     void vRemove();
-
-    bool vEmpty();
+    bool vEmpty() const;
 
     Span* carve(size_t pages);
 
+    void use();
+    void free();
+    bool inUse() const;
+
 private:
 
-    Span** nextData();
-    Span** prevData();
-
-    Span* m_prev;
-    Span* m_next;
+    Span* m_pPrev;
+    Span* m_pNext;
+    Span* m_vPrev;
+    Span* m_vNext;
     size_t m_pages;
     bool m_inUse;
     void* m_data;
