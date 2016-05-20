@@ -5,10 +5,12 @@
 using namespace std;
 namespace sitcmalloc {
 
-Span::Span():
-    m_prev(nullptr),
-    m_next(nullptr),
-    m_pages(0),
+Span::Span(size_t pages):
+    m_pPrev(nullptr),
+    m_pNext(nullptr),
+    m_vPrev(nullptr),
+    m_vNext(nullptr),
+    m_pages(pages),
     m_inUse(false),
     m_data(nullptr) {
 }
@@ -18,7 +20,8 @@ Span* Span::create(void* p, size_t pages) {
         return nullptr;
     }
     Span* result = reinterpret_cast<Span*>(p);
-    result->m_prev = result->m_next = nullptr;
+    result->m_pPrev = result->m_pNext = nullptr;
+    result->m_vPrev = result->m_vNext = nullptr;
     result->m_data = nullptr;
     result->m_pages = pages;
 
@@ -34,11 +37,12 @@ void* Span::data() {
 }
 
 Span* Span::pNext() const {
-    return m_next;
+    return m_pNext;
 }
 
 Span* Span::pPrev() const {
-    return m_prev;
+
+    return m_pPrev;
 }
 
 void Span::use() {
@@ -55,30 +59,30 @@ bool Span::inUse() const {
 
 void Span::pPrependToLeft(Span* span) {
     ASSERT(span);
-    ASSERT(span->m_next == nullptr);
-    ASSERT(span->m_prev == nullptr);
+    ASSERT(span->m_pNext == nullptr);
+    ASSERT(span->m_pPrev == nullptr);
 
-    span->m_prev = m_prev;
-    span->m_next = this;
-    if (m_prev) {
-        m_prev->m_next = span;
+    span->m_pPrev = m_pPrev;
+    span->m_pNext = this;
+    if (m_pPrev) {
+        m_pPrev->m_pNext = span;
     }
 
-    m_prev = span;
+    m_pPrev = span;
 }
 
 void Span::pPrepend(Span* span) {
     ASSERT(span);
-    ASSERT(span->m_next == nullptr);
-    ASSERT(span->m_prev == nullptr);
+    ASSERT(span->m_pNext == nullptr);
+    ASSERT(span->m_pPrev == nullptr);
 
-    span->m_next = m_next;
-    span->m_prev = this;
-    if (m_next) {
-        m_next->m_prev = span;
+    span->m_pNext = m_pNext;
+    span->m_pPrev = this;
+    if (m_pNext) {
+        m_pNext->m_pPrev = span;
     }
 
-    m_next = span;
+    m_pNext = span;
 }
 
 void Span::vPrepend(Span* span) {
@@ -145,14 +149,14 @@ Span* Span::carve(size_t pages) {
 }
 
 void Span::pRemove() {
-    if (m_prev) {
-        m_prev->m_next = m_next;
+    if (m_pPrev) {
+        m_pPrev->m_pNext = m_pNext;
     }
-    if (m_next) {
-        m_next->m_prev = m_prev;
+    if (m_pNext) {
+        m_pNext->m_pPrev = m_pPrev;
     }
-    m_prev = nullptr;
-    m_next = nullptr;
+    m_pPrev = nullptr;
+    m_pNext = nullptr;
 }
 
 Span** Span::nextData() {

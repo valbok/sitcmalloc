@@ -8,3 +8,6 @@ add_executable(PageHeapTest PageHeapTest.cpp)
 link_directories(${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(PageHeapTest gtest sitcmalloc)
 
+add_executable(SpanTest SpanTest.cpp)
+link_directories(${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(SpanTest gtest sitcmalloc)
