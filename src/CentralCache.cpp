@@ -10,7 +10,7 @@ CentralCache& CentralCache::instance(size_t sizeClass) {
 	CentralCache& result = list[sizeClass];
 	result.m_sizeClass = sizeClass;
     result.m_pages = classToPages(result.m_sizeClass);
-    result.m_size = pagesToBytes(result.m_pages);
+    result.m_size = sizeToClass(sizeClass);
 	return result; 
 }
 
@@ -18,7 +18,7 @@ Span* CentralCache::fetch() {
     Span* span = m_span.vNext();
     if (span) {
         span->vRemove();
-        return span->data();
+        return span;
     }
     return nullptr;
 }
@@ -27,7 +27,7 @@ void* CentralCache::alloc() {
     Span* span = fetch();
     void* result = span ? span->data() : nullptr;
     if (!result) {
-        Span* s = PageHeap::instance()->alloc(m_pages);
+        Span* s = PageHeap::instance().alloc(m_pages);
         if (!s) {
             return nullptr;
         }

@@ -13,7 +13,7 @@ class CentralCache {
 public:
     static CentralCache& instance(size_t sizeClass);
     void init(size_t sizeClass);
-    void* data();
+    void* alloc();
 private:
 	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}
 	CentralCache(const CentralCache&);
