@@ -25,10 +25,10 @@ TEST(sys_alloc_test, testSmallAlloc) {
 TEST(sys_alloc_test, testPageAlloc) {
     const size_t count = getpagesize()*2;
     char *p = (char *) sys_alloc(count);
-    for (int i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         p[i] = i % 255;
     }
-    for (int i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         const char e = i % 255;
         EXPECT_EQ(e, p[i]);
     }

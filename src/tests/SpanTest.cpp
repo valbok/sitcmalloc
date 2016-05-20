@@ -209,3 +209,16 @@ TEST(SpanTest, testCarve) {
     EXPECT_EQ(2, c->pages());
     EXPECT_EQ(8, root->pages());
 }
+
+TEST(SpanTest, testSplit) {
+    const int pages = 1;
+    char* a[pagesToBytes(pages)] = {0};
+    Span* root = Span::create(a, pages);
+    void* start; 
+    const size_t splitBy = 8;
+    size_t num = root->split(splitBy, start);
+    const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
+    const size_t expected = (pagesToBytes(1) - spanSize) / splitBy;
+    EXPECT_EQ(expected, num);
+    EXPECT_EQ(root->data(), start);
+}

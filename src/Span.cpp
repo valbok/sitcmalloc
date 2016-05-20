@@ -8,11 +8,10 @@ namespace sitcmalloc {
 Span::Span(size_t pages):
     m_pPrev(nullptr),
     m_pNext(nullptr),
-    m_vPrev(nullptr),
-    m_vNext(nullptr),
     m_pages(pages),
     m_inUse(false),
-    m_data(nullptr) {
+    m_vPrev(nullptr),
+    m_vNext(nullptr) {
 }
 
 Span* Span::create(void* p, size_t pages) {
@@ -22,7 +21,6 @@ Span* Span::create(void* p, size_t pages) {
     Span* result = reinterpret_cast<Span*>(p);
     result->m_pPrev = result->m_pNext = nullptr;
     result->m_vPrev = result->m_vNext = nullptr;
-    result->m_data = nullptr;
     result->m_pages = pages;
 
     return result;
@@ -33,7 +31,7 @@ size_t Span::pages() const {
 }
 
 void* Span::data() {
-    return &m_data;
+    return &m_vPrev;
 }
 
 Span* Span::pNext() const {
@@ -125,7 +123,6 @@ Span* Span::carve(size_t pages) {
     Span* result = this;
     size_t delta = m_pages - pages;
     if (delta) {
-        cout << "delta " << delta << endl;
         char* ptr = reinterpret_cast<char*>(this);
         result = Span::create(ptr + pagesToBytes(delta), pages);
         ASSERT(result);
@@ -149,6 +146,24 @@ void Span::pRemove() {
     m_pNext = nullptr;
 }
 
+size_t Span::split(size_t size, void*& result) {
+    ASSERT(inUse());
+    void** tail = reinterpret_cast<void**>(data());
+    char* start = reinterpret_cast<char*>(data());
+    char* limit = reinterpret_cast<char*>(this) + pagesToBytes(m_pages);
+    size_t num = 0;
+    while (start + size <= limit) {
+        *tail = start;
+        tail = reinterpret_cast<void**>(start);
+        start += size;
+        ++num;
+    }
+    ASSERT(start <= limit);
+    *tail = NULL;
+    result = data();
+
+    return num;
+}
 
 }  // namespace sitcmalloc
 

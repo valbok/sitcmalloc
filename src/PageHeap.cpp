@@ -36,7 +36,7 @@ Span* PageHeap::search(size_t pages) {
         if (span->pages() >= pages) {
             if (!result
                 || span->pages() < result->pages()
-                || (span->pages() == result->pages() && span->data() < result->data())
+                || (span->pages() == result->pages() && span < result)
                 ) {
                 result = span;
                 ASSERT(!result->inUse());

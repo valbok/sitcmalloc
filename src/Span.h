@@ -35,6 +35,7 @@ public:
     void free();
     bool inUse() const;
 
+    size_t split(size_t size, void*& result);
 private:
 
     Span* m_pPrev;
@@ -43,7 +44,6 @@ private:
     bool m_inUse;
     Span* m_vPrev;
     Span* m_vNext;
-    void* m_data;
 };
 
 
