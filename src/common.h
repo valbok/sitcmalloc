@@ -17,6 +17,10 @@ static inline size_t pagesToBytes(size_t pages) {
     return pages << PAGE_SHIFT;
 }
 
+static inline size_t classToPages(size_t sizeClass) {
+    return pages << PAGE_SHIFT;
+}
+
 
 }  // namespace sitcmalloc
 
