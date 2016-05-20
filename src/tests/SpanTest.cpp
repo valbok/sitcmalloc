@@ -7,7 +7,7 @@
 
 #include <gtest/gtest.h>
 #include <Span.h>
-
+#include <common.h>
 #include <iostream>
 
 using namespace std;
@@ -15,9 +15,8 @@ using namespace sitcmalloc;
 
 TEST(SpanTest, testCreate) {
     char* a[50] = {0};
-    const int pages = 1;
-    Span* s = Span::create(a, pages);
-    EXPECT_EQ(pages, s->pages());
+    Span* s = Span::create(a, 1);
+    EXPECT_EQ(1, s->pages());
     EXPECT_EQ(nullptr, s->pPrev());
     EXPECT_EQ(nullptr, s->pNext());
 
@@ -191,4 +190,22 @@ TEST(SpanTest, testVariableRemoveMiddleDLL) {
 
     EXPECT_EQ(nullptr, root.vPrev());
     EXPECT_EQ(&s1, root.vNext());
+}
+
+TEST(SpanTest, testUse) {
+    Span root(0);
+    EXPECT_FALSE(root.inUse());
+    root.use();
+    EXPECT_TRUE(root.inUse());
+    root.free();
+    EXPECT_FALSE(root.inUse());
+}
+
+TEST(SpanTest, testCarve) {
+    char* a[pagesToBytes(10)] = {0};
+    Span* root = Span::create(a, 10);
+    Span* c = root->carve(2);
+    EXPECT_TRUE(c != nullptr);
+    EXPECT_EQ(2, c->pages());
+    EXPECT_EQ(8, root->pages());
 }

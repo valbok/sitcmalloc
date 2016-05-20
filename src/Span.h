@@ -39,10 +39,10 @@ private:
 
     Span* m_pPrev;
     Span* m_pNext;
-    Span* m_vPrev;
-    Span* m_vNext;
     size_t m_pages;
     bool m_inUse;
+    Span* m_vPrev;
+    Span* m_vNext;
     void* m_data;
 };
 
