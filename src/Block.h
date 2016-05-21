@@ -11,15 +11,15 @@ namespace sitcmalloc {
 class Block {
 public:
 
-    void* next();
+    Block* next();
     size_t split(void*, size_t);
-  void* m_next;
+
 private:
     Block() {}
     Block(const Block&);
     Block& operator=(const Block&);
 
-
+    void* m_next;
 };
 
 

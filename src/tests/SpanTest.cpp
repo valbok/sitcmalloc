@@ -212,19 +212,18 @@ TEST(SpanTest, testCarve) {
 }
 
 TEST(SpanTest, testSplit) {
-    /*const int pages = 1;
-    char* a[pagesToBytes(pages)] = {0};
+    const int pages = 1;
+    char a[pagesToBytes(pages)] = {0};
     Span* root = Span::create(a, pages);
     const size_t splitBy = 8;
     Block* start = root->split(splitBy);
     const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
-    const size_t expected = (pagesToBytes(1) - spanSize) / splitBy;
-
+    const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
     EXPECT_EQ(root->block(), start);
     int num = 0;
     while (start) {
         ++num;
         start = start->next();
     }
-    EXPECT_EQ(expected, num);*/
+    EXPECT_EQ(expected, num);
 }

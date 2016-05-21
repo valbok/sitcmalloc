@@ -34,7 +34,7 @@ Block* CentralCache::alloc() {
         }
         m_span.vPrepend(s);
 
-        result = s->split(m_size);
+        //result = s->split(m_size);
     }
     return result;
 }

@@ -13,6 +13,7 @@ size_t Block::split(void* limit, size_t size) {
     while (start + size <= limit) {
         *tail = start;
         tail = reinterpret_cast<void**>(start);
+        //printf(">%d %p tail=%p, limit=%p\n",num, start,tail, limit );
         start += size;
         ++num;
     }
@@ -21,8 +22,8 @@ size_t Block::split(void* limit, size_t size) {
     return num;
 }
 
-void* Block::next() {
-    return m_next;
+Block* Block::next() {
+    return reinterpret_cast<Block*>(m_next);
 }
 
 }  // namespace sitcmalloc

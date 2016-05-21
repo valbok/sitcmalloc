@@ -156,20 +156,10 @@ void Span::pRemove() {
 
 Block* Span::split(size_t size) {
     ASSERT(inUse());
-    void** tail = reinterpret_cast<void**>(data());
-    char* start = reinterpret_cast<char*>(data());
-    char* limit = reinterpret_cast<char*>(this) + pagesToBytes(m_pages);
-    size_t num = 0;
-    while (start + size <= limit) {
-        *tail = start;
-        tail = reinterpret_cast<void**>(start);
-        start += size;
-        ++num;
-    }
-    cout << "num " << num << endl;;
-    ASSERT(start <= limit);
+    Block* result = reinterpret_cast<Block*>(data());
+    size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size);
 
-    return block();
+    return num ? result : nullptr;
 }
 
 }  // namespace sitcmalloc
