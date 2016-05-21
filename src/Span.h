@@ -5,6 +5,8 @@
 
 namespace sitcmalloc {
 
+class Block;
+
 /**
  *
  */
@@ -15,7 +17,8 @@ public:
     static Span* create(void* p, size_t pages);
 
     size_t pages() const;
-    void* data();
+
+    Block* block();
 
     Span* pNext() const;
     Span* pPrev() const;
@@ -35,8 +38,9 @@ public:
     void free();
     bool inUse() const;
 
-    size_t split(size_t size, void*& result);
+    Block* split(size_t size);
 private:
+    void* data();
 
     Span* m_pPrev;
     Span* m_pNext;

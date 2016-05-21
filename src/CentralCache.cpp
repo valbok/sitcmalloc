@@ -2,6 +2,7 @@
 #include "CentralCache.h"
 #include "PageHeap.h"
 #include "common.h"
+#include "Block.h"
 
 namespace sitcmalloc {
 
@@ -11,7 +12,7 @@ CentralCache& CentralCache::instance(size_t sizeClass) {
 	result.m_sizeClass = sizeClass;
     result.m_pages = classToPages(result.m_sizeClass);
     result.m_size = sizeToClass(sizeClass);
-	return result; 
+	return result;
 }
 
 Span* CentralCache::fetch() {
@@ -23,9 +24,9 @@ Span* CentralCache::fetch() {
     return nullptr;
 }
 
-void* CentralCache::alloc() {
+Block* CentralCache::alloc() {
     Span* span = fetch();
-    void* result = span ? span->data() : nullptr;
+    Block* result = span ? span->block() : nullptr;
     if (!result) {
         Span* s = PageHeap::instance().alloc(m_pages);
         if (!s) {
@@ -33,11 +34,8 @@ void* CentralCache::alloc() {
         }
         m_span.vPrepend(s);
 
-        size_t num = s->split(m_size, result);
-        if (!num) {
-            return nullptr;
-        }
-    } 
+        result = s->split(m_size);
+    }
     return result;
 }
 

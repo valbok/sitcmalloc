@@ -6,6 +6,8 @@
 
 namespace sitcmalloc {
 
+class Block;
+
 /**
  *
  */
@@ -13,12 +15,12 @@ class CentralCache {
 public:
     static CentralCache& instance(size_t sizeClass);
     void init(size_t sizeClass);
-    void* alloc();
+    Block* alloc();
 private:
 	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}
 	CentralCache(const CentralCache&);
 	CentralCache& operator=(const CentralCache&);
-	
+
 	Span* fetch();
 
 	Span m_span;

@@ -1,8 +1,11 @@
 #include "Span.h"
 #include <common.h>
 #include <iostream>
+#include "Block.h"
 
 using namespace std;
+
+
 namespace sitcmalloc {
 
 Span::Span(size_t pages):
@@ -33,6 +36,11 @@ size_t Span::pages() const {
 void* Span::data() {
     return &m_vPrev;
 }
+
+Block* Span::block() {
+    return reinterpret_cast<Block*>(data());
+}
+
 
 Span* Span::pNext() const {
     return m_pNext;
@@ -146,7 +154,7 @@ void Span::pRemove() {
     m_pNext = nullptr;
 }
 
-size_t Span::split(size_t size, void*& result) {
+Block* Span::split(size_t size) {
     ASSERT(inUse());
     void** tail = reinterpret_cast<void**>(data());
     char* start = reinterpret_cast<char*>(data());
@@ -158,11 +166,10 @@ size_t Span::split(size_t size, void*& result) {
         start += size;
         ++num;
     }
+    cout << "num " << num << endl;;
     ASSERT(start <= limit);
-    *tail = NULL;
-    result = data();
 
-    return num;
+    return block();
 }
 
 }  // namespace sitcmalloc
