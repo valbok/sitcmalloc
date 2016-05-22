@@ -16,7 +16,7 @@ using namespace sitcmalloc;
 
 TEST(BlockTest, testSplit) {
     const int pages = 1;
-    char a[pagesToBytes(pages)] = {0};
+    char a[pagesToBytes(pages)] = {1};
     const size_t splitBy = 8;
     Block* b = reinterpret_cast<Block*>(a);
     size_t num = b->split(a + pagesToBytes(pages), splitBy);
@@ -28,4 +28,31 @@ TEST(BlockTest, testSplit) {
         ++num;
     }
     EXPECT_EQ(expected, num);
+}
+
+TEST(BlockTest, testPrepend) {
+    char a[10];
+    char b[10];
+    Block* ab = reinterpret_cast<Block*>(a);
+    Block* bb = reinterpret_cast<Block*>(b);
+    ab->prepend(bb);
+    EXPECT_EQ(bb, ab->next());
+}
+
+TEST(BlockTest, testRemove) {
+    char a[10];
+    char b[10];
+    char c[10];
+    Block* ab = reinterpret_cast<Block*>(a);
+    Block* bb = reinterpret_cast<Block*>(b);
+    Block* cb = reinterpret_cast<Block*>(c);
+    ab->prepend(cb);
+    ab->prepend(bb);
+    EXPECT_EQ(bb, ab->next());
+    EXPECT_EQ(cb, bb->next());
+
+    bb->remove(ab);
+    EXPECT_EQ(cb, ab->next());
+    EXPECT_EQ(nullptr, bb->next());
+
 }

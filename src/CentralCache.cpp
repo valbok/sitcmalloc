@@ -29,12 +29,10 @@ Block* CentralCache::alloc() {
     Block* result = span ? span->block() : nullptr;
     if (!result) {
         Span* s = PageHeap::instance().alloc(m_pages);
-        if (!s) {
-            return nullptr;
+        if (s) {
+            m_span.vPrepend(s);
+            result = s->split(m_size);
         }
-        m_span.vPrepend(s);
-
-        //result = s->split(m_size);
     }
     return result;
 }

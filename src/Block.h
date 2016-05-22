@@ -2,7 +2,7 @@
 #define SITCMALLOC_BLOCK_H
 
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
-
+#include "common.h"
 namespace sitcmalloc {
 
 /**
@@ -11,8 +11,42 @@ namespace sitcmalloc {
 class Block {
 public:
 
-    Block* next();
-    size_t split(void*, size_t);
+    inline Block* next() {
+       return reinterpret_cast<Block*>(m_next);
+    }
+
+    size_t split(void* limit, size_t size) {
+        void** tail = &m_next;
+        char* start = reinterpret_cast<char*>(&m_next);
+        size_t num = 0;
+        while (start + size <= limit) {
+            *tail = start;
+            tail = reinterpret_cast<void**>(start);
+            start += size;
+            ++num;
+        }
+        *tail = nullptr;
+        ASSERT(start <= limit);
+
+        return num;
+    }
+
+    inline void prepend(Block* block) {
+        if (!block) {
+            return;
+        }
+
+        block->m_next = m_next;
+        m_next = block;
+    }
+
+    inline void remove(Block* prev) {
+        if (!prev) {
+            return;
+        }
+        prev->m_next = m_next;
+        m_next = nullptr;
+    }
 
 private:
     Block() {}
