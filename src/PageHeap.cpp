@@ -27,19 +27,21 @@ Span* PageHeap::search(size_t pages) {
 
             merge(span);
             merge(result);
-
-            return result;
+            break;
         }
     }
 
-    for (Span* span = m_span.vNext(); span != nullptr; span = span->vNext()) {
-        if (span->pages() >= pages) {
-            if (!result
-                || span->pages() < result->pages()
-                || (span->pages() == result->pages() && span < result)
-                ) {
-                result = span;
-                ASSERT(!result->inUse());
+    // Search in large spans.
+    if (!result) {
+        for (Span* span = m_span.vNext(); span != nullptr; span = span->vNext()) {
+            if (span->pages() >= pages) {
+                if (!result
+                    || span->pages() < result->pages()
+                    || (span->pages() == result->pages() && span < result)
+                    ) {
+                    result = span;
+                    ASSERT(!result->inUse());
+                }
             }
         }
     }
