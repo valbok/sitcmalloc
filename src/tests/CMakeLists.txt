@@ -23,3 +23,7 @@ target_link_libraries(CentralCacheTest gtest sitcmalloc)
 add_executable(ThreadCacheTest ThreadCacheTest.cpp)
 link_directories(${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(ThreadCacheTest gtest sitcmalloc)
+
+add_executable(common_test common_test.cpp)
+link_directories(${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(common_test gtest sitcmalloc)
