@@ -84,5 +84,10 @@ TEST(BlockTest, testPop) {
     EXPECT_EQ(&b, a.pop());
     EXPECT_EQ(nullptr, b.next());
     EXPECT_EQ(&c, a.next());
+    EXPECT_EQ(nullptr, c.next());
 
+    EXPECT_EQ(&c, a.pop());
+    EXPECT_EQ(nullptr, b.next());
+    EXPECT_EQ(nullptr, a.next());
+    EXPECT_EQ(nullptr, c.next());
 }
