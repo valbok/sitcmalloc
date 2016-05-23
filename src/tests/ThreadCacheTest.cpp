@@ -24,6 +24,6 @@ TEST(ThreadCacheTest, testInstance) {
     std::thread t1([&tc1] {tc1 = &ThreadCache::instance();});
     std::thread t2([&tc2] {tc2 = &ThreadCache::instance();});
     t1.join();
-    t2.join();    
+    t2.join();
     EXPECT_TRUE(tc1 != tc2);
 }

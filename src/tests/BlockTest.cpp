@@ -69,5 +69,20 @@ TEST(BlockTest, testRemove) {
     EXPECT_TRUE(ab->empty());
     EXPECT_TRUE(bb->empty());
     EXPECT_TRUE(cb->empty());
+}
+
+TEST(BlockTest, testPop) {
+    Block a;
+    Block b;
+    Block c;
+    a.prepend(&c);
+    a.prepend(&b);
+    EXPECT_EQ(&b, a.next());
+    EXPECT_EQ(&c, b.next());
+    EXPECT_EQ(nullptr, c.next());
+
+    EXPECT_EQ(&b, a.pop());
+    EXPECT_EQ(nullptr, b.next());
+    EXPECT_EQ(&c, a.next());
 
 }

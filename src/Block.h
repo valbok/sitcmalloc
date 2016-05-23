@@ -11,14 +11,15 @@ namespace sitcmalloc {
  */
 class Block {
 public:
+    Block() : m_next(nullptr) {}
 
-    inline Block* next() {
-       return reinterpret_cast<Block*>(m_next);
+    inline Block* next() const {
+       return m_next;
     }
 
     size_t split(void* limit, size_t size) {
-        ASSERT(size >= 8);
-        void** tail = &m_next;
+        ASSERT(size >= sizeof(Block*));
+        void** tail = reinterpret_cast<void**>(&m_next);
         char* start = reinterpret_cast<char*>(&m_next);
         size_t num = 0;
         while (start + size <= limit) {
@@ -49,16 +50,24 @@ public:
         m_next = nullptr;
     }
 
+    inline Block* pop() {
+        Block* next = m_next;
+        if (m_next) {
+            m_next->remove(this);
+        }
+        return next;
+    }
+
     inline bool empty() const {
         return m_next == nullptr;
     }
 
 private:
-    Block() {}
+    
     Block(const Block&);
     Block& operator=(const Block&);
 
-    void* m_next;
+    Block* m_next;
 };
 
 
