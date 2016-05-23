@@ -41,10 +41,9 @@ public:
     }
 
     inline void remove(Block* prev) {
-        if (!prev) {
-            return;
+        if (prev) {
+            prev->m_next = m_next;    
         }
-        prev->m_next = m_next;
         m_next = nullptr;
     }
 

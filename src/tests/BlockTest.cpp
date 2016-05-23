@@ -63,4 +63,11 @@ TEST(BlockTest, testRemove) {
     EXPECT_FALSE(ab->empty());
     EXPECT_TRUE(bb->empty());
     EXPECT_TRUE(cb->empty());
+
+    ab->remove(nullptr);
+    EXPECT_EQ(nullptr, bb->next());    
+    EXPECT_TRUE(ab->empty());
+    EXPECT_TRUE(bb->empty());
+    EXPECT_TRUE(cb->empty());
+
 }
