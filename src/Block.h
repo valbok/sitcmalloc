@@ -3,6 +3,7 @@
 
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
 #include "common.h"
+#include <iostream>
 namespace sitcmalloc {
 
 /**
@@ -16,6 +17,7 @@ public:
     }
 
     size_t split(void* limit, size_t size) {
+        ASSERT(size >= 8);
         void** tail = &m_next;
         char* start = reinterpret_cast<char*>(&m_next);
         size_t num = 0;

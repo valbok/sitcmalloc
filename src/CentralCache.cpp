@@ -4,6 +4,8 @@
 #include "common.h"
 #include "Block.h"
 
+
+#include <iostream>
 namespace sitcmalloc {
 
 CentralCache& CentralCache::instance(size_t sizeClass) {
@@ -11,7 +13,7 @@ CentralCache& CentralCache::instance(size_t sizeClass) {
 	CentralCache& result = list[sizeClass];
 	result.m_sizeClass = sizeClass;
     result.m_pages = classToPages(result.m_sizeClass);
-    result.m_size = sizeToClass(sizeClass);
+    result.m_size = classToSize(sizeClass);
 	return result;
 }
 
@@ -19,16 +21,17 @@ Span* CentralCache::fetch() {
     Span* span = m_span.vNext();
     if (span) {
         span->vRemove();
-        return span;
     }
-    return nullptr;
+    return span;
 }
 
 Block* CentralCache::alloc() {
     Span* span = fetch();
+    
     Block* result = span ? span->block() : nullptr;
     if (!result) {
-        Span* s = PageHeap::instance().alloc(m_pages);
+        std::lock_guard<std::mutex> lock(m_mutex);
+        Span* s = PageHeap::instance().alloc(m_pages);        
         if (s) {
             result = s->split(m_size);
         }

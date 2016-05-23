@@ -16,5 +16,10 @@ using namespace std;
 using namespace sitcmalloc;
 
 
-TEST(CentralCacheTest, testInstance) {
+TEST(CentralCacheTest, testFetch) {
+    CentralCache& c = CentralCache::instance(1);
+    Block* b = c.alloc();
+    EXPECT_TRUE(b != nullptr);
+    EXPECT_FALSE(b->empty());
+    
 }

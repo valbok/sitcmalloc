@@ -157,6 +157,7 @@ void Span::pRemove() {
 Block* Span::split(size_t size) {
     ASSERT(inUse());
     Block* result = reinterpret_cast<Block*>(data());
+
     size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size);
 
     return num ? result : nullptr;
