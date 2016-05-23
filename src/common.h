@@ -38,11 +38,11 @@ static inline size_t classToPages(size_t sizeClass) {
 }
 
 static inline size_t sizeToClass(size_t size) {
-    size_t i = CLASSES - 1;
-    for (;i > 0 && classSizes[i] >= size; --i) {
+    int i = CLASSES - 1;
+    for (; i >= 0 && classSizes[i] > size; --i) {
     }
 
-    return i;
+    return i + 1;
 }
 
 static inline size_t classToSize(size_t sizeClass) {
