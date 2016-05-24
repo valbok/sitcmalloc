@@ -16,7 +16,6 @@
 using namespace std;
 using namespace sitcmalloc;
 
-
 TEST(ThreadCacheTest, testInstance) {
     ThreadCache* tc1 = nullptr;
     ThreadCache* tc2 = nullptr;
@@ -26,4 +25,18 @@ TEST(ThreadCacheTest, testInstance) {
     t1.join();
     t2.join();
     EXPECT_TRUE(tc1 != tc2);
+}
+
+TEST(ThreadCacheTest, testAlloc) {
+    {
+        Block* b = ThreadCache::instance().alloc(8);
+        EXPECT_TRUE(b != nullptr);
+        EXPECT_EQ(nullptr, b->next());
+    }
+    {
+        cout << "CLASSES=" << CLASSES <<endl;
+        Block* b = ThreadCache::instance().alloc(MAX_CLASS_SIZE);
+        EXPECT_TRUE(b != nullptr);
+        EXPECT_EQ(nullptr, b->next());
+    }
 }

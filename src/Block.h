@@ -42,7 +42,7 @@ public:
         block->m_next = m_next;
         m_next = block;
     }
-
+    // todo remove it
     inline void remove(Block* prev) {
         if (prev) {
             prev->m_next = m_next;    
@@ -60,6 +60,10 @@ public:
 
     inline bool empty() const {
         return m_next == nullptr;
+    }
+    
+    inline void* data() {
+        return this;
     }
 
 private:
