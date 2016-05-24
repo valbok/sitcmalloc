@@ -60,7 +60,7 @@ void PageHeap::merge(Span* span) {
     }
 }
 
-Span* PageHeap::alloc(size_t pages) {
+Span* PageHeap::alloc(size_t pages) {    
     Span* result = search(pages);
     if (!result) {
         result = allocFromSystem(pages);

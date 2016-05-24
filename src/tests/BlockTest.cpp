@@ -109,9 +109,3 @@ TEST(BlockTest, testPop) {
     EXPECT_EQ(nullptr, c.next());
 }
 
-TEST(BlockTest, testData) {
-    Block a;
-    void* data = a.data();
-    EXPECT_TRUE(data != nullptr);
-
-}

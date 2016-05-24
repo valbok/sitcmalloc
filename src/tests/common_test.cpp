@@ -58,6 +58,9 @@ TEST(common_test, testSize2Class) {
     EXPECT_EQ(86, sizeToClass(253953));
     EXPECT_EQ(86, sizeToClass(MAX_CLASS_SIZE - 1));
     EXPECT_EQ(CLASSES - 1, sizeToClass(MAX_CLASS_SIZE));
+    EXPECT_EQ(LARGE_CLASS, sizeToClass(MAX_CLASS_SIZE + 1));
+    EXPECT_EQ(LARGE_CLASS, sizeToClass(MAX_CLASS_SIZE + 100));
+    EXPECT_EQ(LARGE_CLASS, sizeToClass(MAX_CLASS_SIZE + 1000000));
 }
 
 TEST(common_test, testClassToPages) {
@@ -79,4 +82,11 @@ TEST(common_test, testClassToPages) {
     EXPECT_EQ(60, sizeToMinPages(classToSize(84)));
     EXPECT_EQ(62, sizeToMinPages(classToSize(85)));
     EXPECT_EQ(64, sizeToMinPages(classToSize(86)));
+}
+
+TEST(common_test, testAlignment) {
+    EXPECT_EQ(MAX_CLASS_SIZE, alignment(MAX_CLASS_SIZE));
+    EXPECT_EQ(MAX_CLASS_SIZE + pagesToBytes(1), alignment(MAX_CLASS_SIZE + 1));
+    EXPECT_EQ(MAX_CLASS_SIZE + pagesToBytes(1), alignment(MAX_CLASS_SIZE + pagesToBytes(1)));
+    EXPECT_EQ(MAX_CLASS_SIZE + pagesToBytes(2), alignment(MAX_CLASS_SIZE + pagesToBytes(1) + 1));
 }

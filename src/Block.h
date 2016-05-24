@@ -51,7 +51,7 @@ public:
         m_next = nullptr;
     }
 
-    inline Block* pop() {
+    inline void* pop() {
         Block* next = m_next;
         if (m_next) {
             m_next->remove(this);
@@ -63,10 +63,6 @@ public:
         return m_next == nullptr;
     }
     
-    inline void* data() {
-        return this;
-    }
-
 private:
     
     Block(const Block&);

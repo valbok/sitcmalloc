@@ -17,7 +17,9 @@ using namespace sitcmalloc;
 
 TEST(CentralCacheTest, testInstance) {
     EXPECT_TRUE(&CentralCache::instance(1) == &CentralCache::instance(1));
-    EXPECT_FALSE(&CentralCache::instance(1) == &CentralCache::instance(2));
+    EXPECT_TRUE(&CentralCache::instance(1) == &CentralCache::instance(2));
+    EXPECT_TRUE(&CentralCache::instance(1) == &CentralCache::instance(8));
+    EXPECT_TRUE(&CentralCache::instance(1) != &CentralCache::instance(9));
 }
 
 TEST(CentralCacheTest, testFetch) {
@@ -25,5 +27,12 @@ TEST(CentralCacheTest, testFetch) {
     Block* b = c.alloc();
     EXPECT_TRUE(b != nullptr);
     EXPECT_FALSE(b->empty());
+}
+
+TEST(CentralCacheTest, testAllocLarge) {
+    CentralCache& c = CentralCache::instance(MAX_CLASS_SIZE + 1);
+    Block* b = c.alloc();
+    EXPECT_TRUE(b != nullptr);
+    EXPECT_TRUE(b->empty());
 
 }

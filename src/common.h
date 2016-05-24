@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <iostream>
 #include <assert.h>
+#include <mutex>
+
 namespace sitcmalloc {
 
 #define ASSERT(x) assert((x))
@@ -29,13 +31,14 @@ static const size_t classSizes[] = {
     204800, 212992, 221184, 229376, 237568, 245760, 253952, 262144};
 
 static const size_t CLASSES = sizeof(classSizes) / sizeof(classSizes[0]) - 1;
+static const size_t LARGE_CLASS = CLASSES;
 
 static inline size_t pagesToBytes(size_t pages) {
     return pages << PAGE_SHIFT;
 }
 
 static inline size_t sizeToClass(size_t size) {
-    int i = CLASSES - 1;
+    int i = CLASSES;
     // todo bin search
     for (; i >= 0 && classSizes[i] >= size; --i) {
     }
@@ -49,9 +52,15 @@ static inline size_t classToSize(size_t sizeClass) {
 
 static inline size_t sizeToMinPages(size_t size) {
     size_t pages = 1;
-    for (; pagesToBytes(pages) / size < 2; ++pages) {
+    const size_t min = 2;
+    for (; pagesToBytes(pages) / size < min; ++pages) {
     }
     return pages;
+}
+
+static inline size_t alignment(size_t size) {
+    const size_t page = pagesToBytes(1);
+    return ((size + page - 1) / page) * page;
 }
 
 }  // namespace sitcmalloc

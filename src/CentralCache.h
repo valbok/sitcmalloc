@@ -5,7 +5,6 @@
 #include "Block.h"
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
 #include <mutex>
-
 namespace sitcmalloc {
 
 /**
@@ -13,7 +12,7 @@ namespace sitcmalloc {
  */
 class CentralCache {
 public:
-    static CentralCache& instance(size_t sizeClass);
+    static CentralCache& instance(size_t size);
     Block* alloc();
 
 private:
