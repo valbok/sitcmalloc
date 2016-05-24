@@ -29,8 +29,13 @@ TEST(ThreadCacheTest, testInstance) {
 
 TEST(ThreadCacheTest, testAlloc) {
     {
-        void* b = ThreadCache::instance().alloc(8);
+        const char* str = "SiTCMalloc";
+        size_t size = strlen(str) + 1;
+        void* b = ThreadCache::instance().alloc(size);
         EXPECT_TRUE(b != nullptr);
+        char* c = new (b) char[size];
+        strcpy(c, str);
+        EXPECT_TRUE(strcmp(c, str) == 0);
     }
     {
         void* b = ThreadCache::instance().alloc(MAX_CLASS_SIZE);
