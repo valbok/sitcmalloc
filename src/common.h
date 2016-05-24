@@ -50,15 +50,14 @@ static inline size_t classToSize(size_t sizeClass) {
     return classSizes[sizeClass + 1];
 }
 
-static inline size_t sizeToMinPages(size_t size) {
+static inline size_t sizeToMinPages(size_t size, size_t min = 2) {
     size_t pages = 1;
-    const size_t min = 2;
     for (; pagesToBytes(pages) / size < min; ++pages) {
     }
     return pages;
 }
 
-static inline size_t alignment(size_t size) {
+static inline size_t pageAligned(size_t size) {
     const size_t page = pagesToBytes(1);
     return ((size + page - 1) / page) * page;
 }

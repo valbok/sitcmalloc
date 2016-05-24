@@ -15,8 +15,8 @@ CentralCache& CentralCache::instance(size_t size) {
 	CentralCache& result = list[sizeClass];
 	result.m_sizeClass = sizeClass;
     // @todo Cache it
-    result.m_size = sizeClass == LARGE_CLASS ? alignment(size) : classToSize(sizeClass);
-    result.m_pages = sizeToMinPages(result.m_size);
+    result.m_size = sizeClass == LARGE_CLASS ? pageAligned(size) : classToSize(sizeClass);
+    result.m_pages = sizeClass == LARGE_CLASS ? sizeToMinPages(result.m_size + sizeof(Span), 1) : sizeToMinPages(result.m_size, 4);
 
 	return result;
 }
