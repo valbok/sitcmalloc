@@ -26,7 +26,6 @@ private:
 	size_t m_sizeClass;
 	size_t m_pages;
 	size_t m_size;
-	std::mutex m_mutex;
 };
 
 

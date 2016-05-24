@@ -60,7 +60,8 @@ void PageHeap::merge(Span* span) {
     }
 }
 
-Span* PageHeap::alloc(size_t pages) {    
+Span* PageHeap::alloc(size_t pages) {
+    std::lock_guard<std::mutex> lock(m_mutex);
     Span* result = search(pages);
     if (!result) {
         result = allocFromSystem(pages);

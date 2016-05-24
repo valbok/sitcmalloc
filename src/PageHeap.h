@@ -45,6 +45,8 @@ private:
     Span m_span;
     Span m_tail;
 
+    std::mutex m_mutex;
+
 };
 
 
