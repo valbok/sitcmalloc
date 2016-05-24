@@ -10,11 +10,12 @@ ThreadCache& ThreadCache::instance() {
     return result;
 }
 
-Block* ThreadCache::alloc(size_t size) {
+void* ThreadCache::alloc(size_t size) {
     Block* result = nullptr;
     if (size <= MAX_CLASS_SIZE) {
         const size_t sizeClass = sizeToClass(size);
         Block* block = &m_list[sizeClass];
+
         if (block->empty()) {
             Block* b = CentralCache::instance(sizeClass).alloc();
             if (b) {
@@ -27,7 +28,7 @@ Block* ThreadCache::alloc(size_t size) {
 
     }
 
-    return result;
+    return result->data();
 }
 
 }  // namespace sitcmalloc

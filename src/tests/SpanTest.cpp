@@ -227,3 +227,20 @@ TEST(SpanTest, testSplit) {
     }
     EXPECT_EQ(expected, num);
 }
+
+TEST(SpanTest, testSplitBig) {
+    const int pages = sizeToMinPages(MAX_CLASS_SIZE);
+    char a[pagesToBytes(pages)] = {0};
+    Span* root = Span::create(a, pages);
+    const size_t splitBy = MAX_CLASS_SIZE;
+    Block* start = root->split(splitBy);
+    const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
+    const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
+    EXPECT_EQ(root->block(), start);
+    int num = 0;
+    while (start) {
+        ++num;
+        start = start->next();
+    }
+    EXPECT_EQ(expected, num);
+}

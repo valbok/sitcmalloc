@@ -31,6 +31,23 @@ TEST(BlockTest, testSplit) {
     EXPECT_EQ(expected, num);
 }
 
+TEST(BlockTest, testSplitBig) {
+    const int pages = sizeToMinPages(MAX_CLASS_SIZE);
+    char a[pagesToBytes(pages)] = {1};
+    const size_t splitBy = MAX_CLASS_SIZE;
+    Block* b = reinterpret_cast<Block*>(a);
+    size_t num = b->split(a + pagesToBytes(pages), splitBy);
+    const size_t expected = pagesToBytes(pages) / splitBy;
+    EXPECT_EQ(expected, num);
+    EXPECT_FALSE(b->empty());
+    num = 0;
+    while (b) {
+        b = b->next();
+        ++num;
+    }
+    EXPECT_EQ(expected, num);
+}
+
 TEST(BlockTest, testPrepend) {
     char a[10] = {0};
     char b[10] = {0};

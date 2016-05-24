@@ -4,6 +4,7 @@
 #include <stddef.h> // for size_t, NULL, ptrdiff_t
 #include <stdint.h>
 #include <cstdio>
+#include <iostream>
 #include <assert.h>
 namespace sitcmalloc {
 
@@ -33,10 +34,6 @@ static inline size_t pagesToBytes(size_t pages) {
     return pages << PAGE_SHIFT;
 }
 
-static inline size_t classToPages(size_t sizeClass) {
-    return 1; // TODO
-}
-
 static inline size_t sizeToClass(size_t size) {
     int i = CLASSES - 1;
     // todo bin search
@@ -50,6 +47,12 @@ static inline size_t classToSize(size_t sizeClass) {
     return classSizes[sizeClass + 1];
 }
 
+static inline size_t sizeToMinPages(size_t size) {
+    size_t pages = 1;
+    for (; pagesToBytes(pages) / size < 2; ++pages) {
+    }
+    return pages;
+}
 
 }  // namespace sitcmalloc
 

@@ -12,8 +12,9 @@ CentralCache& CentralCache::instance(size_t sizeClass) {
 	static CentralCache list[CLASSES];
 	CentralCache& result = list[sizeClass];
 	result.m_sizeClass = sizeClass;
-    result.m_pages = classToPages(sizeClass);
     result.m_size = classToSize(sizeClass);
+    result.m_pages = sizeToMinPages(result.m_size);
+
 	return result;
 }
 
@@ -30,11 +31,14 @@ Block* CentralCache::alloc() {
     Block* result = span ? span->block() : nullptr;
     if (!result) {
         std::lock_guard<std::mutex> lock(m_mutex);
+
         Span* s = PageHeap::instance().alloc(m_pages);        
+
         if (s) {
             result = s->split(m_size);
         }
     }
+
     return result;
 }
 

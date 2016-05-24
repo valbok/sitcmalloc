@@ -29,14 +29,11 @@ TEST(ThreadCacheTest, testInstance) {
 
 TEST(ThreadCacheTest, testAlloc) {
     {
-        Block* b = ThreadCache::instance().alloc(8);
+        void* b = ThreadCache::instance().alloc(8);
         EXPECT_TRUE(b != nullptr);
-        EXPECT_EQ(nullptr, b->next());
     }
     {
-        cout << "CLASSES=" << CLASSES <<endl;
-        Block* b = ThreadCache::instance().alloc(MAX_CLASS_SIZE);
+        void* b = ThreadCache::instance().alloc(MAX_CLASS_SIZE);
         EXPECT_TRUE(b != nullptr);
-        EXPECT_EQ(nullptr, b->next());
     }
 }

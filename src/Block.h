@@ -4,6 +4,7 @@
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
 #include "common.h"
 #include <iostream>
+using namespace std;
 namespace sitcmalloc {
 
 /**

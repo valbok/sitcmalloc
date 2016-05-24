@@ -13,7 +13,7 @@ namespace sitcmalloc {
 class ThreadCache {
 public:
     static ThreadCache& instance();
-    Block* alloc(size_t size);
+    void* alloc(size_t size);
 private:
 	ThreadCache() {}
 	ThreadCache(const ThreadCache&);
