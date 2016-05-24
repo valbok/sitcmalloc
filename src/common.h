@@ -5,12 +5,21 @@
 #include <stdint.h>
 #include <cstdio>
 #include <iostream>
+
 #include <assert.h>
-#include <mutex>
 
 namespace sitcmalloc {
 
-#define ASSERT(x) assert((x))
+inline void _assert(const char* expression, const char* file, int line) {
+    fprintf(stderr, "Assertion '%s' failed: %s:%d\n", expression, file, line);
+    abort();
+}
+
+#if defined NDEBUG && NDEBUG
+#define ASSERT(EXPRESSION) ((void)0)
+#else
+#define ASSERT(x)  ((x) ? (void)0 : _assert(#x, __FILE__, __LINE__))
+#endif
 
 static const size_t PAGE_SHIFT = 13;
 static const size_t MAX_PAGES = 1 << (20 - PAGE_SHIFT);
