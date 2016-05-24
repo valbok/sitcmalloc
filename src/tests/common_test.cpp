@@ -25,7 +25,8 @@ TEST(common_test, testClass2Size) {
     EXPECT_EQ(1024, classToSize(32));
     EXPECT_EQ(81920, classToSize(64));
     EXPECT_EQ(MAX_CLASS_SIZE, classToSize(86));
-    EXPECT_EQ(classToSize(86), classToSize(CLASSES - 1));
+    EXPECT_EQ(classToSize(86), classToSize(LARGE_CLASS - 1));
+    EXPECT_EQ(classToSize(86), classToSize(CLASSES - 2));
 }
 
 TEST(common_test, testSize2Class) {
@@ -57,7 +58,7 @@ TEST(common_test, testSize2Class) {
     EXPECT_EQ(85, sizeToClass(253952));
     EXPECT_EQ(86, sizeToClass(253953));
     EXPECT_EQ(86, sizeToClass(MAX_CLASS_SIZE - 1));
-    EXPECT_EQ(CLASSES - 1, sizeToClass(MAX_CLASS_SIZE));
+    EXPECT_EQ(CLASSES - 2, sizeToClass(MAX_CLASS_SIZE));
     EXPECT_EQ(LARGE_CLASS, sizeToClass(MAX_CLASS_SIZE + 1));
     EXPECT_EQ(LARGE_CLASS, sizeToClass(MAX_CLASS_SIZE + 100));
     EXPECT_EQ(LARGE_CLASS, sizeToClass(MAX_CLASS_SIZE + 1000000));

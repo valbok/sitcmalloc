@@ -30,15 +30,15 @@ static const size_t classSizes[] = {
     139264, 147456, 155648, 163840, 172032, 180224, 188416, 196608, 
     204800, 212992, 221184, 229376, 237568, 245760, 253952, 262144};
 
-static const size_t CLASSES = sizeof(classSizes) / sizeof(classSizes[0]) - 1;
-static const size_t LARGE_CLASS = CLASSES;
+static const size_t CLASSES = sizeof(classSizes) / sizeof(classSizes[0]);
+static const size_t LARGE_CLASS = CLASSES - 1;
 
 static inline size_t pagesToBytes(size_t pages) {
     return pages << PAGE_SHIFT;
 }
 
 static inline size_t sizeToClass(size_t size) {
-    int i = CLASSES;
+    int i = LARGE_CLASS;
     // todo bin search
     for (; i >= 0 && classSizes[i] >= size; --i) {
     }
