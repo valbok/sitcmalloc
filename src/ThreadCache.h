@@ -15,9 +15,9 @@ public:
     static ThreadCache& instance();
     void* alloc(size_t size);
 private:
-	ThreadCache() {}
-	ThreadCache(const ThreadCache&);
-	ThreadCache& operator=(const ThreadCache&);
+	ThreadCache() = default;
+	ThreadCache(const ThreadCache&) = delete;
+	ThreadCache& operator=(const ThreadCache&) = delete;
 
 	Block m_list[CLASSES];
 };

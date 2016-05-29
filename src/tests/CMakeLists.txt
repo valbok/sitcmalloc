@@ -27,3 +27,7 @@ target_link_libraries(ThreadCacheTest gtest sitcmalloc)
 add_executable(common_test common_test.cpp)
 link_directories(${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(common_test gtest sitcmalloc)
+
+add_executable(PageMapTest PageMapTest.cpp)
+link_directories(${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(PageMapTest gtest sitcmalloc)

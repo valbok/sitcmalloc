@@ -15,7 +15,6 @@ public:
     Span(size_t pages = 0);
 
     static Span* create(void* p, size_t pages);
-
     size_t pages() const;
 
     Block* block();
@@ -37,15 +36,17 @@ public:
     void use();
     void free();
     bool inUse() const;
+    size_t sizeClass() const;
 
-    Block* split(size_t size);
+    Block* split(size_t size, size_t sizeClass = 0);
 private:
     void* data();
 
     Span* m_pPrev;
     Span* m_pNext;
     size_t m_pages;
-    bool m_inUse;
+    unsigned char m_sizeClass : 7;
+    unsigned char m_inUse : 1;
     Span* m_vPrev;
     Span* m_vNext;
 };

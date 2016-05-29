@@ -33,9 +33,9 @@ Block* CentralCache::alloc() {
     Span* span = fetch();
     Block* result = span ? span->block() : nullptr;
     if (!result) {
-        Span* s = PageHeap::instance().alloc(m_pages);        
+        Span* s = PageHeap::instance().alloc(m_pages);
         if (s) {
-            result = s->split(m_size);
+            result = s->split(m_size, m_sizeClass);
         }
     }
 

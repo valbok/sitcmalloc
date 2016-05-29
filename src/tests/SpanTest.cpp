@@ -244,3 +244,14 @@ TEST(SpanTest, testSplitBig) {
     }
     EXPECT_EQ(expected, num);
 }
+
+TEST(SpanTest, testSplitSizeClass) {
+    const int pages = 1;
+    char a[pagesToBytes(pages)] = {0};
+    Span* root = Span::create(a, pages);
+    const size_t splitBy = 8;
+    root->split(splitBy, 0);
+    EXPECT_EQ(0, root->sizeClass());
+    root->split(splitBy, 1);
+    EXPECT_EQ(1, root->sizeClass());
+}

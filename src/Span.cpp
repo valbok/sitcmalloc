@@ -12,7 +12,8 @@ Span::Span(size_t pages):
     m_pPrev(nullptr),
     m_pNext(nullptr),
     m_pages(pages),
-    m_inUse(false),
+    m_sizeClass(127),
+    m_inUse(0),
     m_vPrev(nullptr),
     m_vNext(nullptr) {
 }
@@ -52,15 +53,19 @@ Span* Span::pPrev() const {
 }
 
 void Span::use() {
-    m_inUse = true;
+    m_inUse = 1;
 }
 
 void Span::free() {
-    m_inUse = false;
+    m_inUse = 0;
 }
 
 bool Span::inUse() const {
     return m_inUse;
+}
+
+size_t Span::sizeClass() const {
+    return m_sizeClass;
 }
 
 void Span::pPrependToLeft(Span* span) {
@@ -154,11 +159,11 @@ void Span::pRemove() {
     m_pNext = nullptr;
 }
 
-Block* Span::split(size_t size) {
+Block* Span::split(size_t size, size_t sizeClass) {
     ASSERT(inUse());
     Block* result = reinterpret_cast<Block*>(data());
     size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size);
-
+    m_sizeClass = sizeClass & 0b1111111;
     return num ? result : nullptr;
 }
 

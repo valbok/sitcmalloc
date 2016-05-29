@@ -1,4 +1,5 @@
 #include "PageHeap.h"
+#include "PageMap.h"
 #include "sys_alloc.h"
 #include <unistd.h>
 #include <iostream>
@@ -10,10 +11,13 @@ Span* PageHeap::allocFromSystem(size_t pages) {
 	if (pages < MIN_ALLOCATED_PAGES) {
     	pages = MIN_ALLOCATED_PAGES;
 	}
+
     void* ptr = sys_alloc(pagesToBytes(pages));
+    ASSERT(reinterpret_cast<uintptr_t>(ptr) & (pagesToBytes(1) - 1) == 0);
 
     return Span::create(ptr, pages);
 }
+
 
 Span* PageHeap::search(size_t pages) {
     Span* result = nullptr;
@@ -82,7 +86,7 @@ Span* PageHeap::alloc(size_t pages) {
 }
 
 void PageHeap::free(Span* span) {
-
+    auto m = PageMap::instance();
 }
 
 }  // namespace sitcmalloc

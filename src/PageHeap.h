@@ -4,6 +4,7 @@
 #include <stddef.h> // for size_t, NULL, ptrdiff_t
 #include "Span.h"
 #include "common.h"
+
 #include <mutex>
 
 namespace sitcmalloc {
@@ -17,7 +18,7 @@ public:
 
 
     /**
-     *
+     * @param pages
      */
     Span* alloc(size_t);
 
@@ -45,7 +46,9 @@ private:
     Span m_span;
     Span m_tail;
 
+
     std::mutex m_mutex;
+
 
 };
 
