@@ -55,6 +55,10 @@ TEST(PageHeapTest, testPageMap) {
             EXPECT_EQ(s, t);
         }
     }
+    size_t pages = 10;
+    Span* s = PageHeap::instance().alloc(pages);
+    EXPECT_EQ(nullptr, PageHeap::span(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(s) + pagesToBytes(pages))));
+    EXPECT_EQ(nullptr, PageHeap::span(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(s) + pagesToBytes(pages) + 1)));
 }
 
 TEST(PageHeapTest, testAllocUniquePtrs) {
