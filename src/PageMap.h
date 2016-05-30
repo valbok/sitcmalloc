@@ -2,10 +2,11 @@
 #define SITCMALLOC_PAGE_MAP_H
 
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
-#include <string.h>                     // for memset
+#include <string.h> // for memset
 #include "sys_alloc.h"
 #include <iostream>
 using namespace std;
+
 namespace sitcmalloc {
 
 /**
@@ -19,11 +20,11 @@ public:
         return map;
     }
 
-    static bool set(uintptr_t key, void* value) {
+    static inline bool set(uintptr_t key, void* value) {
         return instance()._set(key, value);
     }
 
-    static void* get(uintptr_t key) {
+    static inline void* get(uintptr_t key) {
         return instance()._get(key);
     }
 
@@ -35,6 +36,7 @@ private:
     static const int LEAF_SIZE = 1 << LEAF_BITS;
 
     PageMap() = default;
+
     bool _set(uintptr_t key, void* ptr) {
         uintptr_t node, leaf, value;
         keys(key, node, leaf, value);
@@ -50,8 +52,8 @@ private:
         if (m_nodes[node]->leaves[leaf] == nullptr) {
             return false;
         }
-        m_nodes[node]->leaves[leaf]->values[value] = ptr;
 
+        m_nodes[node]->leaves[leaf]->values[value] = ptr;
         return true;
     }
 

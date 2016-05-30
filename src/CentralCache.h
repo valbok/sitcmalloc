@@ -13,7 +13,7 @@ namespace sitcmalloc {
 class CentralCache {
 public:
     static CentralCache& instance(size_t size);
-    Block* alloc();
+    Block* alloc(size_t& num);
 
 private:
 	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}

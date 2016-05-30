@@ -75,3 +75,10 @@ TEST(ThreadCacheTest, testAllocMoreMax) {
         EXPECT_EQ(v, s[i]);
     }
 }
+
+TEST(ThreadCacheTest, testFree) {
+    const size_t size = 8;
+    char* s = (char*) ThreadCache::instance().alloc(size);
+    ThreadCache::instance().free(s);
+
+}

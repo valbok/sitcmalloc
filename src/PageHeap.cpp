@@ -6,18 +6,52 @@
 using namespace std;
 namespace sitcmalloc {
 
+namespace {
+
+static inline uintptr_t key(void* ptr) {
+    return reinterpret_cast<uintptr_t>(ptr) >> PAGE_SHIFT;
+}
+inline static void store(Span* s) {
+    auto map = PageMap::instance();
+    //cout << s <<"-"<< s + pagesToBytes(s->pages()) <<endl;
+    for (size_t i = 0; i < pagesToBytes(s->pages()); i += pagesToBytes(1)) {
+        uintptr_t start = reinterpret_cast<uintptr_t>(s);
+        void* offset = reinterpret_cast<void*>(start + i);
+        //cout <<"__key(s + i)="<<s+i<<":"<<key(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(s) + i))<<endl;
+        map.set(key(offset), s);
+    }
+}
+}
 
 Span* PageHeap::allocFromSystem(size_t pages) {
 	if (pages < MIN_ALLOCATED_PAGES) {
     	pages = MIN_ALLOCATED_PAGES;
 	}
 
-    void* ptr = sys_alloc(pagesToBytes(pages));
-    ASSERT(reinterpret_cast<uintptr_t>(ptr) & (pagesToBytes(1) - 1) == 0);
+    size_t size = pagesToBytes(pages);
+    size_t alignment = pagesToBytes(1);
+    size = ((size + alignment - 1) / alignment) * alignment;
+    void* ptr = sys_alloc(size);
+    uintptr_t n = reinterpret_cast<uintptr_t>(ptr);
+
+    if ((n & (alignment - 1)) != 0) {
+        size_t extra = alignment - (n & (alignment - 1));
+        void* ptr2 = sys_alloc(extra);
+        if (reinterpret_cast<uintptr_t>(ptr2) != (n + size)) {
+            ptr = sys_alloc(size + alignment - 1);
+            n = reinterpret_cast<uintptr_t>(ptr);
+            if ((n & (alignment-1)) != 0) {
+                n += alignment - (n & (alignment - 1));
+            }
+            ptr = reinterpret_cast<void*>(n);
+        } else {
+            ptr = reinterpret_cast<void*>(n + extra);
+        }
+    }
+    ASSERT((reinterpret_cast<uintptr_t>(ptr) & (alignment - 1)) == 0);
 
     return Span::create(ptr, pages);
 }
-
 
 Span* PageHeap::search(size_t pages) {
     Span* result = nullptr;
@@ -28,9 +62,10 @@ Span* PageHeap::search(size_t pages) {
 
             span->vRemove();
             result = span->carve(pages);
-
             merge(span);
-            merge(result);
+            if (span != result) {
+                merge(result);
+            }
             break;
         }
     }
@@ -49,8 +84,17 @@ Span* PageHeap::search(size_t pages) {
             }
         }
     }
+    if (result) {
+        Span* s = result->carve(pages);
+        store(s);
+        if (s != result) {
+            store(result);
+        }
 
-    return result ? result->carve(pages) : nullptr;
+        result = s;
+    }
+
+    return result;
 }
 
 void PageHeap::merge(Span* span) {
@@ -72,6 +116,7 @@ Span* PageHeap::alloc(size_t pages) {
         if (result) {
             m_tail.pPrependToLeft(result);
 
+            store(result);
             merge(result);
             result = search(pages);
         }
@@ -86,7 +131,11 @@ Span* PageHeap::alloc(size_t pages) {
 }
 
 void PageHeap::free(Span* span) {
-    auto m = PageMap::instance();
+}
+
+
+Span* PageHeap::span(void* ptr) {
+    return reinterpret_cast<Span*>(PageMap::get(key(ptr)));
 }
 
 }  // namespace sitcmalloc

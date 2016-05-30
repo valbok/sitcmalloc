@@ -31,6 +31,8 @@ public:
     void vRemove();
     bool vEmpty() const;
 
+    // | this   | result with requested pages
+    // |--------|++++|
     Span* carve(size_t pages);
 
     void use();
@@ -38,7 +40,7 @@ public:
     bool inUse() const;
     size_t sizeClass() const;
 
-    Block* split(size_t size, size_t sizeClass = 0);
+    Block* split(size_t size, size_t sizeClass, size_t& num);
 private:
     void* data();
 

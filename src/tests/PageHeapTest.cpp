@@ -46,3 +46,24 @@ TEST(PageHeapTest, testLargeAllocPages) {
     Span* s1 = PageHeap::instance().alloc(pages);
     EXPECT_EQ(pages, s1->pages());
 }
+
+TEST(PageHeapTest, testPageMap) {
+    for (size_t pages = 1000; pages > 0; pages >>= 1) {
+        Span* s = PageHeap::instance().alloc(pages);
+        for (size_t i = 0; i < pagesToBytes(pages); ++i) {
+            Span* t = PageHeap::span(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(s) + i));
+            EXPECT_EQ(s, t);
+        }
+    }
+}
+
+TEST(PageHeapTest, testAllocUniquePtrs) {
+    Span* spans[1000] = {0};
+    for (size_t i = 0; i < 1000; ++i) {
+        Span* s = PageHeap::instance().alloc(1);
+        for (size_t j = 0; j < 1000 && spans[j] != 0; ++j) {
+            EXPECT_TRUE(spans[j] != s);
+        }
+        spans[i] = s;
+    }
+}

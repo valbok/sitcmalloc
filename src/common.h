@@ -18,7 +18,7 @@ inline void _assert(const char* expression, const char* file, int line) {
 #if defined NDEBUG && NDEBUG
 #define ASSERT(EXPRESSION) ((void)0)
 #else
-#define ASSERT(x)  ((x) ? (void)0 : _assert(#x, __FILE__, __LINE__))
+#define ASSERT(x)  (x) ? (void)0 : _assert(#x, __FILE__, __LINE__)
 #endif
 
 static const size_t PAGE_SHIFT = 13;

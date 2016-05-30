@@ -14,12 +14,30 @@ class ThreadCache {
 public:
     static ThreadCache& instance();
     void* alloc(size_t size);
+    void free(void* ptr);
 private:
-	ThreadCache() = default;
+	ThreadCache() {}
 	ThreadCache(const ThreadCache&) = delete;
 	ThreadCache& operator=(const ThreadCache&) = delete;
 
-	Block m_list[CLASSES];
+    struct Root : Block {
+        Root() : m_len(0), m_maxLen(0) {}
+        inline void prepend(Block* block, size_t num) {
+            if (empty()) {
+                m_maxLen = num;
+            }
+            Block::prepend(block);
+            m_len += num;
+
+        }
+        inline void* pop() {
+            --m_len;
+            return Block::pop();
+        }
+        size_t m_len;
+        size_t m_maxLen;
+    };
+	Root m_list[CLASSES];
 };
 
 

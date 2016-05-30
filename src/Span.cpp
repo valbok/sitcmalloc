@@ -133,13 +133,14 @@ bool Span::vEmpty() const {
 }
 
 Span* Span::carve(size_t pages) {
+    ASSERT(!inUse());
     Span* result = this;
     size_t delta = m_pages - pages;
     if (delta) {
         char* ptr = reinterpret_cast<char*>(this);
         result = Span::create(ptr + pagesToBytes(delta), pages);
         ASSERT(result);
-
+        result->free();
         pPrepend(result);
 
         m_pages = delta;
@@ -159,12 +160,12 @@ void Span::pRemove() {
     m_pNext = nullptr;
 }
 
-Block* Span::split(size_t size, size_t sizeClass) {
+Block* Span::split(size_t size, size_t sizeClass, size_t& num) {
     ASSERT(inUse());
     Block* result = reinterpret_cast<Block*>(data());
-    size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size);
+    num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size);
     m_sizeClass = sizeClass & 0b1111111;
-    return num ? result : nullptr;
+    return result;
 }
 
 }  // namespace sitcmalloc

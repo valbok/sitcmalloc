@@ -215,43 +215,51 @@ TEST(SpanTest, testSplit) {
     const int pages = 1;
     char a[pagesToBytes(pages)] = {0};
     Span* root = Span::create(a, pages);
+    root->use();
     const size_t splitBy = 8;
-    Block* start = root->split(splitBy);
+    size_t num;
+    Block* start = root->split(splitBy, 0, num);
     const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
     const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
     EXPECT_EQ(root->block(), start);
-    int num = 0;
+    int anum = 0;
     while (start) {
-        ++num;
+        ++anum;
         start = start->next();
     }
-    EXPECT_EQ(expected, num);
+    EXPECT_EQ(expected, anum);
+    EXPECT_EQ(num, anum);
 }
 
 TEST(SpanTest, testSplitBig) {
     const int pages = sizeToMinPages(MAX_CLASS_SIZE);
     char a[pagesToBytes(pages)] = {0};
     Span* root = Span::create(a, pages);
+    root->use();
     const size_t splitBy = MAX_CLASS_SIZE;
-    Block* start = root->split(splitBy);
+    size_t num;
+    Block* start = root->split(splitBy, 0, num);
     const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
     const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
     EXPECT_EQ(root->block(), start);
-    int num = 0;
+    int anum = 0;
     while (start) {
-        ++num;
+        ++anum;
         start = start->next();
     }
-    EXPECT_EQ(expected, num);
+    EXPECT_EQ(expected, anum);
+    EXPECT_EQ(num, anum);
 }
 
 TEST(SpanTest, testSplitSizeClass) {
     const int pages = 1;
     char a[pagesToBytes(pages)] = {0};
     Span* root = Span::create(a, pages);
+    root->use();
     const size_t splitBy = 8;
-    root->split(splitBy, 0);
+    size_t num;
+    root->split(splitBy, 0, num);
     EXPECT_EQ(0, root->sizeClass());
-    root->split(splitBy, 1);
+    root->split(splitBy, 1, num);
     EXPECT_EQ(1, root->sizeClass());
 }

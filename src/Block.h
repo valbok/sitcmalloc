@@ -46,7 +46,7 @@ public:
     // todo remove it
     inline void remove(Block* prev) {
         if (prev) {
-            prev->m_next = m_next;    
+            prev->m_next = m_next;
         }
         m_next = nullptr;
     }
@@ -62,9 +62,9 @@ public:
     inline bool empty() const {
         return m_next == nullptr;
     }
-    
+
 private:
-    
+
     Block(const Block&);
     Block& operator=(const Block&);
 

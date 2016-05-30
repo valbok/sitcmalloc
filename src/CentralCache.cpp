@@ -29,13 +29,13 @@ Span* CentralCache::fetch() {
     return span;
 }
 
-Block* CentralCache::alloc() {
+Block* CentralCache::alloc(size_t& num) {
     Span* span = fetch();
     Block* result = span ? span->block() : nullptr;
     if (!result) {
         Span* s = PageHeap::instance().alloc(m_pages);
         if (s) {
-            result = s->split(m_size, m_sizeClass);
+            result = s->split(m_size, m_sizeClass, num);
         }
     }
 

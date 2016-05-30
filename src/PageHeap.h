@@ -27,7 +27,7 @@ public:
      */
     void free(Span*);
 
-
+    static Span* span(void* ptr);
     static PageHeap& instance() {
         static PageHeap result;
         return result;
