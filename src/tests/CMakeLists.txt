@@ -16,6 +16,10 @@ add_executable(BlockTest BlockTest.cpp)
 link_directories(${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(BlockTest gtest sitcmalloc)
 
+add_executable(FreeListTest FreeListTest.cpp)
+link_directories(${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(FreeListTest gtest sitcmalloc)
+
 add_executable(CentralCacheTest CentralCacheTest.cpp)
 link_directories(${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(CentralCacheTest gtest sitcmalloc)

@@ -21,6 +21,10 @@ public:
         return m_next;
     }
 
+    /**
+     * @param[out] end Pointer to last block element
+     *                 which does not have any succeeding objects.
+     */
     size_t split(void* limit, size_t size, Block** end) {
         ASSERT(size >= sizeof(Block*));
         void** tail = reinterpret_cast<void**>(&m_next);

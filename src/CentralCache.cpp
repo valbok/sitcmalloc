@@ -34,10 +34,10 @@ size_t CentralCache::alloc(Block** start, Block** end) {
     Span* span = fetch();
     *start = span ? span->block() : nullptr;
     if (!*start) {
-        Span* s = PageHeap::instance().alloc(m_pages);
-        if (s) {
-            num = s->split(m_size, m_sizeClass, start, end);
-        }
+        span = PageHeap::instance().alloc(m_pages);
+    }
+    if (span) {
+        num = span->split(m_size, m_sizeClass, start, end);
     }
 
     return num;
