@@ -29,17 +29,18 @@ Span* CentralCache::fetch() {
     return span;
 }
 
-Block* CentralCache::alloc(size_t& num) {
+size_t CentralCache::alloc(Block** start, Block** end) {
+    size_t num = 0;
     Span* span = fetch();
-    Block* result = span ? span->block() : nullptr;
-    if (!result) {
+    *start = span ? span->block() : nullptr;
+    if (!*start) {
         Span* s = PageHeap::instance().alloc(m_pages);
         if (s) {
-            result = s->split(m_size, m_sizeClass, num);
+            num = s->split(m_size, m_sizeClass, start, end);
         }
     }
 
-    return result;
+    return num;
 }
 
 }  // namespace sitcmalloc

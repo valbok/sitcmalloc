@@ -14,11 +14,14 @@ class Block {
 public:
     Block() : m_next(nullptr) {}
 
-    inline Block* next() const {
-       return m_next;
+    inline Block* next(Block* n = nullptr) {
+        if (n) {
+            m_next = n;
+        }
+        return m_next;
     }
 
-    size_t split(void* limit, size_t size) {
+    size_t split(void* limit, size_t size, Block** end) {
         ASSERT(size >= sizeof(Block*));
         void** tail = reinterpret_cast<void**>(&m_next);
         char* start = reinterpret_cast<char*>(&m_next);
@@ -30,17 +33,18 @@ public:
             ++num;
         }
         *tail = nullptr;
+        *end = reinterpret_cast<Block*>(tail);
         ASSERT(start <= limit);
 
         return num;
     }
 
-    inline void prepend(Block* block) {
+    /*inline void prepend(Block* block) {
         if (!block) {
             return;
         }
 
-        block->m_next = m_next;
+        block->prepend(m_next);
         m_next = block;
     }
     // todo remove it
@@ -53,11 +57,14 @@ public:
 
     inline void* pop() {
         Block* next = m_next;
-        if (m_next) {
-            m_next->remove(this);
+        if (next) {
+            m_next = next->m_next;
+            cout <<"new next="<<m_next << endl;
+            next->m_next = nullptr;
         }
+
         return next;
-    }
+    }*/
 
     inline bool empty() const {
         return m_next == nullptr;
@@ -70,7 +77,6 @@ private:
 
     Block* m_next;
 };
-
 
 }  // namespace sitcmalloc
 

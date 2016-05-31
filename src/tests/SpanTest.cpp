@@ -217,8 +217,8 @@ TEST(SpanTest, testSplit) {
     Span* root = Span::create(a, pages);
     root->use();
     const size_t splitBy = 8;
-    size_t num;
-    Block* start = root->split(splitBy, 0, num);
+    Block* start,* end;
+    size_t num = root->split(splitBy, 0, &start, &end);
     const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
     const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
     EXPECT_EQ(root->block(), start);
@@ -237,8 +237,8 @@ TEST(SpanTest, testSplitBig) {
     Span* root = Span::create(a, pages);
     root->use();
     const size_t splitBy = MAX_CLASS_SIZE;
-    size_t num;
-    Block* start = root->split(splitBy, 0, num);
+    Block* start,* end;
+    size_t num = root->split(splitBy, 0, &start, &end);
     const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
     const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
     EXPECT_EQ(root->block(), start);
@@ -257,9 +257,9 @@ TEST(SpanTest, testSplitSizeClass) {
     Span* root = Span::create(a, pages);
     root->use();
     const size_t splitBy = 8;
-    size_t num;
-    root->split(splitBy, 0, num);
+    Block* start,* end;
+    size_t num = root->split(splitBy, 0, &start, &end);
     EXPECT_EQ(0, root->sizeClass());
-    root->split(splitBy, 1, num);
+    num = root->split(splitBy, 1, &start, &end);
     EXPECT_EQ(1, root->sizeClass());
 }

@@ -13,31 +13,36 @@ ThreadCache& ThreadCache::instance() {
 
 void* ThreadCache::alloc(size_t size) {
     const size_t sizeClass = sizeToClass(size);
-    Root& root = m_list[sizeClass];
+    FreeList& root = m_list[sizeClass];
 
     if (root.empty()) {
-        size_t num;
-        Block* b = CentralCache::instance(size).alloc(num);
+        Block *b = nullptr, *end = nullptr;
+        size_t num = CentralCache::instance(size).alloc(&b, &end);
         if (b) {
-            root.prepend(b, num);
+            cout <<"alloc prepending="<<sizeClass<<":"<< num<<endl;
+            root.prepend(num, b, end);
+            cout <<"alloc AFTER root is empty="<<sizeClass<<":"<< root.empty()<<endl;
         }
     }
-
-    return root.pop();
+    void* p = root.pop();
+    cout <<"alloc_________ root is empty="<<sizeClass<<":"<< root.empty()<<endl;
+    return p;
 }
 
-void ThreadCache::free(void* ptr) {
+bool ThreadCache::free(void* ptr) {
     Span* span = PageHeap::span(ptr);
     if (span == nullptr) {
-        return;
+        return false;
     }
 
     size_t sizeClass = span->sizeClass();
-    Root& root = m_list[sizeClass];
-    root.prepend(reinterpret_cast<Block*>(ptr), 1);
-    if (root.m_len > root.m_maxLen) {
-
+    FreeList& root = m_list[sizeClass];
+    cout <<"free root is empty="<<sizeClass<<":"<< root.empty()<<endl;
+    root.prepend(1, reinterpret_cast<Block*>(ptr), 0);
+    if (root.length() > root.maxLength()) {
+        // todo
     }
+    return true;
 
 }
 

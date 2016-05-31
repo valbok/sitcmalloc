@@ -160,12 +160,13 @@ void Span::pRemove() {
     m_pNext = nullptr;
 }
 
-Block* Span::split(size_t size, size_t sizeClass, size_t& num) {
+size_t Span::split(size_t size, size_t sizeClass, Block** start, Block** end) {
     ASSERT(inUse());
     Block* result = reinterpret_cast<Block*>(data());
-    num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size);
+    size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size, end);
     m_sizeClass = sizeClass & 0b1111111;
-    return result;
+    *start = result;
+    return num;
 }
 
 }  // namespace sitcmalloc

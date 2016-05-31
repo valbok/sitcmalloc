@@ -77,8 +77,7 @@ TEST(ThreadCacheTest, testAllocMoreMax) {
 }
 
 TEST(ThreadCacheTest, testFree) {
-    const size_t size = 8;
+    const size_t size = 2;
     char* s = (char*) ThreadCache::instance().alloc(size);
-    ThreadCache::instance().free(s);
-
+    EXPECT_TRUE(ThreadCache::instance().free(s));
 }

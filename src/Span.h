@@ -40,7 +40,7 @@ public:
     bool inUse() const;
     size_t sizeClass() const;
 
-    Block* split(size_t size, size_t sizeClass, size_t& num);
+    size_t split(size_t size, size_t sizeClass, Block** start, Block** end);
 private:
     void* data();
 
