@@ -10,15 +10,15 @@ namespace sitcmalloc {
 class FreeList {
 public:
     FreeList() : m_len(0), m_maxLen(0), m_start(nullptr), m_end(nullptr) {}
-    inline void prepend(size_t num, Block* block, Block* end) {
+    inline void prepend(size_t num, Block* start, Block* end) {
         m_len += num;
         if (!m_start) {
             m_maxLen = num;
-            m_start = block;
-            m_end = end;
+            m_start = start;
+            m_end = end ? end : start;
         } else {
-            m_end->next(block);
-            m_end = end ? end : block;
+            m_end->next(start);
+            m_end = end ? end : start;
         }
 
     }

@@ -56,4 +56,42 @@ TEST(FreeListTest, testPrepend) {
     EXPECT_EQ(lastlen + bytes/8, list.length());
     EXPECT_EQ(end, list.end());
     EXPECT_EQ(nullptr, end->next());
+
+    actual = 0;
+    while (list.pop()) {
+        ++actual;
+    }
+    EXPECT_EQ(lastlen + bytes/8, actual);
+    EXPECT_EQ(0, list.length());
+
+    bytes = 8;
+    char d[bytes] = {0};
+    start = reinterpret_cast<Block*>(d);
+    list.prepend(1, start, nullptr);
+    EXPECT_EQ(1, list.length());
+    EXPECT_EQ(start, list.end());
+    EXPECT_TRUE(nullptr != list.end());
+    EXPECT_EQ(nullptr, list.end()->next());
+
+    bytes = 16;
+    char e[bytes] = {1};
+    start = reinterpret_cast<Block*>(e);
+    num = start->split(e + bytes, splitBy, &end);
+    EXPECT_EQ(bytes/8, num);
+
+    EXPECT_TRUE(start->next() != nullptr);
+    list.prepend(num, start, start->next());
+
+    EXPECT_EQ(3, list.length());
+    EXPECT_EQ(nullptr, end->next());
+
+    bytes = 8;
+    char f[bytes] = {0};
+    start = reinterpret_cast<Block*>(f);
+    list.prepend(1, start, nullptr);
+    EXPECT_EQ(4, list.length());
+    EXPECT_EQ(start, list.end());
+    EXPECT_TRUE(nullptr != list.end());
+    EXPECT_EQ(nullptr, list.end()->next());
+    EXPECT_TRUE(start != list.pop());
 }
