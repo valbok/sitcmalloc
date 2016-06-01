@@ -6,23 +6,6 @@
 using namespace std;
 namespace sitcmalloc {
 
-namespace {
-
-static inline uintptr_t key(void* ptr) {
-    return reinterpret_cast<uintptr_t>(ptr) >> PAGE_SHIFT;
-}
-inline static void store(Span* s) {
-    auto map = PageMap::instance();
-    //cout << s <<"-"<< s + pagesToBytes(s->pages()) <<endl;
-    for (size_t i = 0; i < pagesToBytes(s->pages()); i += pagesToBytes(1)) {
-        uintptr_t start = reinterpret_cast<uintptr_t>(s);
-        void* offset = reinterpret_cast<void*>(start + i);
-        //cout <<"__key(s + i)="<<s+i<<":"<<key(reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(s) + i))<<endl;
-        map.set(key(offset), s);
-    }
-}
-}
-
 Span* PageHeap::allocFromSystem(size_t pages) {
 	if (pages < MIN_ALLOCATED_PAGES) {
     	pages = MIN_ALLOCATED_PAGES;
@@ -86,9 +69,9 @@ Span* PageHeap::search(size_t pages) {
     }
     if (result) {
         Span* s = result->carve(pages);
-        store(s);
+        PageMap::store(s);
         if (s != result) {
-            store(result);
+            PageMap::store(result);
         }
 
         result = s;
@@ -116,7 +99,7 @@ Span* PageHeap::alloc(size_t pages) {
         if (result) {
             m_tail.pPrependToLeft(result);
 
-            store(result);
+            PageMap::store(result);
             merge(result);
             result = search(pages);
         }
@@ -133,9 +116,5 @@ Span* PageHeap::alloc(size_t pages) {
 void PageHeap::free(Span* span) {
 }
 
-
-Span* PageHeap::span(void* ptr) {
-    return reinterpret_cast<Span*>(PageMap::get(key(ptr)));
-}
 
 }  // namespace sitcmalloc

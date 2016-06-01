@@ -43,5 +43,9 @@ size_t CentralCache::alloc(Block** start, Block** end) {
     return num;
 }
 
+void CentralCache::free(Span* s) {
+    m_span.vPrepend(s);
+}
+
 }  // namespace sitcmalloc
 

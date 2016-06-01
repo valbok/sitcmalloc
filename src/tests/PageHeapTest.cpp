@@ -15,7 +15,6 @@
 using namespace std;
 using namespace sitcmalloc;
 
-
 TEST(PageHeapTest, testInstance) {
     EXPECT_TRUE(&PageHeap::instance() == &PageHeap::instance());
 }

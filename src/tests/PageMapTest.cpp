@@ -5,9 +5,8 @@
  * @license GNU GPL v2
  */
 
-#include <gtest/gtest.h>
 #include <PageMap.h>
-#include <common.h>
+#include <gtest/gtest.h>
 #include <iostream>
 
 using namespace std;
@@ -18,7 +17,7 @@ TEST(PageMapTest, testInstance) {
 }
 
 TEST(PageMapTest, testSet) {
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < 1000000; ++i) {
         int j = i + 1;
         EXPECT_TRUE(PageMap::set(i, &j));
         EXPECT_EQ(&j, PageMap::get(i));

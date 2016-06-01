@@ -3,8 +3,7 @@
 
 #include <stddef.h> // for size_t, NULL, ptrdiff_t
 #include "Span.h"
-#include "common.h"
-
+#include "PageMap.h"
 #include <mutex>
 
 namespace sitcmalloc {
@@ -27,7 +26,10 @@ public:
      */
     void free(Span*);
 
-    static Span* span(void* ptr);
+    static inline Span* span(void* ptr) {
+        return reinterpret_cast<Span*>(PageMap::get(ptr));
+    }
+
     static PageHeap& instance() {
         static PageHeap result;
         return result;

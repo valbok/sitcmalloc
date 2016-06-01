@@ -1,8 +1,10 @@
 #ifndef SITCMALLOC_PAGE_MAP_H
 #define SITCMALLOC_PAGE_MAP_H
 
+#include "Span.h"
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
 #include <string.h> // for memset
+#include "common.h"
 #include "sys_alloc.h"
 #include <iostream>
 using namespace std;
@@ -24,8 +26,28 @@ public:
         return instance()._set(key, value);
     }
 
+    static inline bool set(void* ptr, void* value) {
+        return instance()._set(key(ptr), value);
+    }
+
     static inline void* get(uintptr_t key) {
         return instance()._get(key);
+    }
+
+    static inline void* get(void* ptr) {
+        return instance()._get(key(ptr));
+    }
+
+    static inline uintptr_t key(void* ptr) {
+        return reinterpret_cast<uintptr_t>(ptr) >> PAGE_SHIFT;
+    }
+
+    inline static void store(Span* s) {
+        storeSpan(s);
+    }
+
+    inline static void remove(Span* s) {
+        storeSpan(s, true);
     }
 
 private:
@@ -36,6 +58,17 @@ private:
     static const int LEAF_SIZE = 1 << LEAF_BITS;
 
     PageMap() = default;
+
+    inline static void storeSpan(Span* s, bool remove = false) {
+        void* value = remove ? nullptr : s;
+        //cout << s->pages()<<":"<<s <<"-"<< s + pagesToBytes(s->pages()) <<endl;
+        for (size_t i = 0; i < pagesToBytes(s->pages()); i += pagesToBytes(1)) {
+            uintptr_t start = reinterpret_cast<uintptr_t>(s);
+            void* offset = reinterpret_cast<void*>(start + i);
+            //cout <<key(offset)<<endl;
+            set(offset, value);
+        }
+    }
 
     bool _set(uintptr_t key, void* ptr) {
         uintptr_t node, leaf, value;

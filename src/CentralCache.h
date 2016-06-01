@@ -14,6 +14,7 @@ class CentralCache {
 public:
     static CentralCache& instance(size_t size);
     size_t alloc(Block** start, Block** end);
+    void free(Span*);
 
 private:
 	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}

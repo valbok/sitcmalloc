@@ -16,17 +16,14 @@ void* ThreadCache::alloc(size_t size) {
     FreeList& root = m_list[sizeClass];
 
     if (root.empty()) {
-        Block *b = nullptr, *end = nullptr;
-        size_t num = CentralCache::instance(size).alloc(&b, &end);
-        if (b) {
-            cout <<"alloc prepending="<<sizeClass<<":"<< num<<endl;
-            root.prepend(num, b, end);
-            cout <<"alloc AFTER root is empty="<<sizeClass<<":"<< root.empty()<<endl;
+        Block *start = nullptr, *end = nullptr;
+        size_t num = CentralCache::instance(size).alloc(&start, &end);
+        if (start) {
+            root.prepend(num, start, end);
         }
     }
-    void* p = root.pop();
-    cout <<"alloc_________ root is empty="<<sizeClass<<":"<< root.empty()<<endl;
-    return p;
+
+    return root.pop();
 }
 
 bool ThreadCache::free(void* ptr) {
@@ -37,11 +34,11 @@ bool ThreadCache::free(void* ptr) {
 
     size_t sizeClass = span->sizeClass();
     FreeList& root = m_list[sizeClass];
-    cout <<"free root is empty="<<sizeClass<<":"<< root.empty()<<endl;
-    root.prepend(1, reinterpret_cast<Block*>(ptr), 0);
-    if (root.length() > root.maxLength()) {
-        // todo
+    root.prepend(1, reinterpret_cast<Block*>(ptr), nullptr);
+    if (root.popped() && root.length() >= root.initLength()) {
+        CentralCache::instance(classToSize(sizeClass)).free(span);
     }
+
     return true;
 
 }
