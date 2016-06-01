@@ -15,28 +15,53 @@ public:
     Span(size_t pages = 0);
 
     static Span* create(void* p, size_t pages);
-    size_t pages() const;
+    inline size_t pages() const {
+        return m_pages;
+    }
 
-    Block* block();
+    inline Block* block() {
+        return reinterpret_cast<Block*>(data());
+    }
 
-    Span* next() const;
-    Span* prev() const;
+    inline Span* next() const {
+        return m_next;
+    }
+
+    inline Span* prev() const {
+        return m_prev;
+    }
+
     void prepend(Span* span);
     void remove();
-    bool empty() const;
+    inline bool empty() const {
+        return m_prev == nullptr && m_next == nullptr;
+    }
 
     // | this   | result with requested pages
     // |--------|++++|
     Span* carve(size_t pages);
 
-    void use();
-    void free();
-    bool inUse() const;
-    size_t sizeClass() const;
+    inline void use() {
+        m_inUse = 1;
+    }
+
+    inline void free() {
+        m_inUse = 0;
+    }
+
+    inline bool inUse() const {
+        return m_inUse;
+    }
+
+    size_t sizeClass() const {
+        return m_sizeClass;
+    }
 
     size_t split(size_t size, size_t sizeClass, Block** start, Block** end);
 private:
-    void* data();
+    inline void* data() {
+        return &m_prev;
+    }
 
     size_t m_pages;
     unsigned char m_sizeClass : 7;

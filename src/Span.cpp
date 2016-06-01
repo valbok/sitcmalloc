@@ -32,34 +32,6 @@ Span* Span::create(void* p, size_t pages) {
     return result;
 }
 
-size_t Span::pages() const {
-    return m_pages;
-}
-
-void* Span::data() {
-    return &m_prev;
-}
-
-Block* Span::block() {
-    return reinterpret_cast<Block*>(data());
-}
-
-void Span::use() {
-    m_inUse = 1;
-}
-
-void Span::free() {
-    m_inUse = 0;
-}
-
-bool Span::inUse() const {
-    return m_inUse;
-}
-
-size_t Span::sizeClass() const {
-    return m_sizeClass;
-}
-
 void Span::prepend(Span* span) {
     ASSERT(span);
     ASSERT(!span->inUse());
@@ -82,18 +54,6 @@ void Span::remove() {
 
     m_next = nullptr;
     m_prev = nullptr;
-}
-
-Span* Span::next() const {
-    return m_next;
-}
-
-Span* Span::prev() const {
-    return m_prev;
-}
-
-bool Span::empty() const {
-    return m_prev == nullptr && m_next == nullptr;
 }
 
 Span* Span::carve(size_t pages) {

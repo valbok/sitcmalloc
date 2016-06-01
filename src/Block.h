@@ -27,18 +27,21 @@ public:
      */
     size_t split(void* limit, size_t size, Block** end) {
         ASSERT(size >= sizeof(Block*));
-        void** tail = reinterpret_cast<void**>(&m_next);
+        Block** tail = reinterpret_cast<Block**>(&m_next);
         char* start = reinterpret_cast<char*>(&m_next);
+
         size_t num = 0;
         while (start + size <= limit) {
-            *tail = start;
-            tail = reinterpret_cast<void**>(start);
+            *tail = (Block*)start;
+            tail = reinterpret_cast<Block**>(start);
             start += size;
             ++num;
         }
         *tail = nullptr;
         *end = reinterpret_cast<Block*>(tail);
         ASSERT(start <= limit);
+        ASSERT(*tail == nullptr);
+        ASSERT((*end)->m_next == nullptr);
 
         return num;
     }

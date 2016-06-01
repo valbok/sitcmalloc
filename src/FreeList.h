@@ -14,13 +14,13 @@ public:
 
     inline void prepend(size_t num, Block* start, Block* end) {
         m_len += num;
-        m_end = end ? end : start;
         if (m_start) {
             m_end->next(start);
         } else {
             m_initLen = num;
             m_start = start;
         }
+        m_end = end ? end : start;
     }
 
     inline void* pop() {
