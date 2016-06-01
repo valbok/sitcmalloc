@@ -32,11 +32,12 @@ bool ThreadCache::free(void* ptr) {
         return false;
     }
 
-    size_t sizeClass = span->sizeClass();
+    const size_t sizeClass = span->sizeClass();
     FreeList& root = m_list[sizeClass];
     root.prepend(1, reinterpret_cast<Block*>(ptr), nullptr);
     if (root.returned()) {
         CentralCache::instance(classToSize(sizeClass)).free(span);
+        root.clear();
     }
 
     return true;

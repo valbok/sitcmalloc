@@ -10,7 +10,8 @@ namespace sitcmalloc {
 
 class FreeList {
 public:
-    FreeList() : m_len(0), m_initLen(0), m_start(nullptr), m_end(nullptr), m_popped(false) {}
+    FreeList() : m_len(0), m_initLen(0), m_start(nullptr), m_end(nullptr), m_waterline(~0) {}
+
     inline void prepend(size_t num, Block* start, Block* end) {
         m_len += num;
         m_end = end ? end : start;
@@ -26,8 +27,9 @@ public:
         void* result = m_start;
         if (m_len > 0 ) {
             --m_len;
-        } else {
-            m_popped = true;
+            if (m_len < m_waterline) {
+                m_waterline = m_len;
+            }
         }
 
         if (m_start) {
@@ -48,16 +50,20 @@ public:
         return m_end;
     }
 
+    void clear() {
+        m_len = 0;
+        m_initLen = 0;
+        m_start = nullptr;
+        m_end = nullptr;
+        m_waterline = ~0;
+    }
+
     size_t initLength() const {
         return m_initLen;
     }
 
-    bool popped() const {
-        return m_popped;
-    }
-
     bool returned() const {
-        return m_popped && m_len >= m_initLen;
+        return m_waterline == 0 && m_len >= m_initLen;
     }
 
 private:
@@ -65,7 +71,7 @@ private:
     size_t m_initLen;
     Block* m_start;
     Block* m_end;
-    bool m_popped;
+    size_t m_waterline;
 };
 
 }  // namespace sitcmalloc
