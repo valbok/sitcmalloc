@@ -56,6 +56,10 @@ public:
         return m_popped;
     }
 
+    bool returned() const {
+        return m_popped && m_len >= m_initLen;
+    }
+
 private:
     size_t m_len;
     size_t m_initLen;

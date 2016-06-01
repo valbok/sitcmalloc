@@ -22,9 +22,9 @@ CentralCache& CentralCache::instance(size_t size) {
 }
 
 Span* CentralCache::fetch() {
-    Span* span = m_span.vNext();
+    Span* span = m_span.next();
     if (span) {
-        span->vRemove();
+        span->remove();
     }
     return span;
 }
@@ -44,7 +44,7 @@ size_t CentralCache::alloc(Block** start, Block** end) {
 }
 
 void CentralCache::free(Span* s) {
-    m_span.vPrepend(s);
+    m_span.prepend(s);
 }
 
 }  // namespace sitcmalloc

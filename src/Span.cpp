@@ -8,14 +8,14 @@ using namespace std;
 
 namespace sitcmalloc {
 
+const char INVALID_SIZE_CLASS = 127;
+
 Span::Span(size_t pages):
-    m_pPrev(nullptr),
-    m_pNext(nullptr),
     m_pages(pages),
-    m_sizeClass(127),
+    m_sizeClass(INVALID_SIZE_CLASS),
     m_inUse(0),
-    m_vPrev(nullptr),
-    m_vNext(nullptr) {
+    m_prev(nullptr),
+    m_next(nullptr) {
 }
 
 Span* Span::create(void* p, size_t pages) {
@@ -23,9 +23,11 @@ Span* Span::create(void* p, size_t pages) {
         return nullptr;
     }
     Span* result = reinterpret_cast<Span*>(p);
-    result->m_pPrev = result->m_pNext = nullptr;
-    result->m_vPrev = result->m_vNext = nullptr;
     result->m_pages = pages;
+    result->m_sizeClass = INVALID_SIZE_CLASS;
+    result->m_inUse = 0;
+    result->m_prev = nullptr;
+    result->m_next = nullptr;
 
     return result;
 }
@@ -35,21 +37,11 @@ size_t Span::pages() const {
 }
 
 void* Span::data() {
-    return &m_vPrev;
+    return &m_prev;
 }
 
 Block* Span::block() {
     return reinterpret_cast<Block*>(data());
-}
-
-
-Span* Span::pNext() const {
-    return m_pNext;
-}
-
-Span* Span::pPrev() const {
-
-    return m_pPrev;
 }
 
 void Span::use() {
@@ -68,68 +60,40 @@ size_t Span::sizeClass() const {
     return m_sizeClass;
 }
 
-void Span::pPrependToLeft(Span* span) {
-    ASSERT(span);
-    ASSERT(span->m_pNext == nullptr);
-    ASSERT(span->m_pPrev == nullptr);
-
-    span->m_pPrev = m_pPrev;
-    span->m_pNext = this;
-    if (m_pPrev) {
-        m_pPrev->m_pNext = span;
-    }
-
-    m_pPrev = span;
-}
-
-void Span::pPrepend(Span* span) {
-    ASSERT(span);
-    ASSERT(span->m_pNext == nullptr);
-    ASSERT(span->m_pPrev == nullptr);
-
-    span->m_pNext = m_pNext;
-    span->m_pPrev = this;
-    if (m_pNext) {
-        m_pNext->m_pPrev = span;
-    }
-
-    m_pNext = span;
-}
-
-void Span::vPrepend(Span* span) {
+void Span::prepend(Span* span) {
     ASSERT(span);
     ASSERT(!span->inUse());
 
-    span->m_vNext = m_vNext;
-    span->m_vPrev = this;
-    if (m_vNext) {
-        m_vNext->m_vPrev = span;
+    span->m_next = m_next;
+    span->m_prev = this;
+    if (m_next) {
+        m_next->m_prev = span;
     }
-    m_vNext = span;
+    m_next = span;
 }
 
-void Span::vRemove() {
-    if (m_vNext) {
-        m_vNext->m_vPrev = m_vPrev;
+void Span::remove() {
+    if (m_next) {
+        m_next->m_prev = m_prev;
     }
-    if (m_vPrev) {
-        m_vPrev->m_vNext = m_vNext;
+    if (m_prev) {
+        m_prev->m_next = m_next;
     }
 
-    m_vNext = nullptr;
-    m_vPrev = nullptr;
+    m_next = nullptr;
+    m_prev = nullptr;
 }
 
-Span* Span::vNext() const {
-    return m_vNext;
+Span* Span::next() const {
+    return m_next;
 }
 
-Span* Span::vPrev() const {
-    return m_vPrev;
+Span* Span::prev() const {
+    return m_prev;
 }
 
-bool Span::vEmpty() const {
-    return m_vPrev == nullptr && m_vNext == nullptr;
+bool Span::empty() const {
+    return m_prev == nullptr && m_next == nullptr;
 }
 
 Span* Span::carve(size_t pages) {
@@ -141,23 +105,11 @@ Span* Span::carve(size_t pages) {
         result = Span::create(ptr + pagesToBytes(delta), pages);
         ASSERT(result);
         result->free();
-        pPrepend(result);
 
         m_pages = delta;
     }
 
     return result;
-}
-
-void Span::pRemove() {
-    if (m_pPrev) {
-        m_pPrev->m_pNext = m_pNext;
-    }
-    if (m_pNext) {
-        m_pNext->m_pPrev = m_pPrev;
-    }
-    m_pPrev = nullptr;
-    m_pNext = nullptr;
 }
 
 size_t Span::split(size_t size, size_t sizeClass, Block** start, Block** end) {

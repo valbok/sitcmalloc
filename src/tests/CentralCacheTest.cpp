@@ -29,7 +29,7 @@ TEST(CentralCacheTest, testFetch) {
     EXPECT_TRUE(b != nullptr);
     EXPECT_TRUE(end != nullptr);
     EXPECT_FALSE(b->empty());
-    EXPECT_EQ(1020, num);
+    EXPECT_EQ(1022, num);
 }
 
 TEST(CentralCacheTest, testAllocLarge) {

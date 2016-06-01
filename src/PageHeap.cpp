@@ -40,10 +40,10 @@ Span* PageHeap::search(size_t pages) {
     Span* result = nullptr;
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
         Span* root = &m_pageSpans[i];
-        if (!root->vEmpty()) {
-            Span* span = root->vNext();
+        if (!root->empty()) {
+            Span* span = root->next();
 
-            span->vRemove();
+            span->remove();
             result = span->carve(pages);
             merge(span);
             if (span != result) {
@@ -55,7 +55,7 @@ Span* PageHeap::search(size_t pages) {
 
     // Search in large spans.
     if (!result) {
-        for (Span* span = m_span.vNext(); span != nullptr; span = span->vNext()) {
+        for (Span* span = m_span.next(); span != nullptr; span = span->next()) {
             if (span->pages() >= pages) {
                 if (!result
                     || span->pages() < result->pages()
@@ -85,9 +85,9 @@ void PageHeap::merge(Span* span) {
         return;
     }
     if (span->pages() <= MAX_PAGES) {
-        m_pageSpans[span->pages() - 1].vPrepend(span);
+        m_pageSpans[span->pages() - 1].prepend(span);
     } else {
-        m_span.vPrepend(span);
+        m_span.prepend(span);
     }
 }
 
@@ -97,8 +97,6 @@ Span* PageHeap::alloc(size_t pages) {
     if (!result) {
         result = allocFromSystem(pages);
         if (result) {
-            m_tail.pPrependToLeft(result);
-
             PageMap::store(result);
             merge(result);
             result = search(pages);
@@ -107,7 +105,7 @@ Span* PageHeap::alloc(size_t pages) {
 
     if (result) {
         result->use();
-        result->vRemove();
+        result->remove();
     }
 
     return result;

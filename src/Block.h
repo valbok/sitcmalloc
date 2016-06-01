@@ -43,33 +43,6 @@ public:
         return num;
     }
 
-    /*inline void prepend(Block* block) {
-        if (!block) {
-            return;
-        }
-
-        block->prepend(m_next);
-        m_next = block;
-    }
-    // todo remove it
-    inline void remove(Block* prev) {
-        if (prev) {
-            prev->m_next = m_next;
-        }
-        m_next = nullptr;
-    }
-
-    inline void* pop() {
-        Block* next = m_next;
-        if (next) {
-            m_next = next->m_next;
-            cout <<"new next="<<m_next << endl;
-            next->m_next = nullptr;
-        }
-
-        return next;
-    }*/
-
     inline bool empty() const {
         return m_next == nullptr;
     }
