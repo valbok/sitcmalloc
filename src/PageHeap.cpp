@@ -63,8 +63,8 @@ Span* PageHeap::fetch(size_t pages) {
     if (result) {
         ASSERT(!result->inUse());
         ASSERT(result->pages() >= pages);
+        result->remove();
         if (result->pages() != pages) {
-            result->remove();
             Span* s = result->carve(pages);
             ASSERT(s->pages() == pages);
             PageMap::store(s);
@@ -74,8 +74,6 @@ Span* PageHeap::fetch(size_t pages) {
             }
 
             result = s;
-        } else {
-            result->remove();
         }
 
         result->use();
