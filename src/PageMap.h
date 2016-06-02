@@ -43,11 +43,11 @@ public:
     }
 
     inline static void store(Span* s) {
-        storeSpan(s);
+        setSpan(s, s);
     }
 
     inline static void remove(Span* s) {
-        storeSpan(s, true);
+        setSpan(s, nullptr);
     }
 
 private:
@@ -59,8 +59,7 @@ private:
 
     PageMap() = default;
 
-    inline static void storeSpan(Span* s, bool remove = false) {
-        void* value = remove ? nullptr : s;
+    inline static void setSpan(Span* s, void* value) {
         //cout << s->pages()<<":"<<s <<"-"<< s + pagesToBytes(s->pages()) <<endl;
         for (size_t i = 0; i < pagesToBytes(s->pages()); i += pagesToBytes(1)) {
             uintptr_t start = reinterpret_cast<uintptr_t>(s);
