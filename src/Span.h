@@ -19,6 +19,10 @@ public:
         return m_pages;
     }
 
+    inline void setPages(size_t pages) {
+        m_pages = pages;
+    }
+
     inline Block* block() {
         return reinterpret_cast<Block*>(data());
     }
@@ -33,8 +37,17 @@ public:
 
     void prepend(Span* span);
     void remove();
+
     inline bool empty() const {
         return m_prev == nullptr && m_next == nullptr;
+    }
+
+    inline Span* pop() {
+        Span* next = m_next;
+        if (next) {
+            next->remove();
+        }
+        return next;
     }
 
     // | this   | result with requested pages

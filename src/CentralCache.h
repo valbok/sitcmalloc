@@ -5,6 +5,7 @@
 #include "Block.h"
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
 #include <mutex>
+
 namespace sitcmalloc {
 
 /**
@@ -17,7 +18,7 @@ public:
     void free(Span*);
 
 private:
-	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}
+	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0), m_freeSpans(0), m_maxFreeSpans(2) {}
 	CentralCache(const CentralCache&);
 	CentralCache& operator=(const CentralCache&);
 
@@ -27,6 +28,8 @@ private:
 	size_t m_sizeClass;
 	size_t m_pages;
 	size_t m_size;
+	size_t m_freeSpans;
+	size_t m_maxFreeSpans;
 	std::mutex m_mutex;
 };
 

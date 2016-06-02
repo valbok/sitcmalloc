@@ -13,7 +13,7 @@ void* sys_alloc(size_t size);
 /**
  *
  */
-bool sys_free(void* start, size_t length);
+bool sys_free(void* start, size_t size);
 
 }  // namespace sitcmalloc
 

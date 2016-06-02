@@ -41,37 +41,35 @@ Span* PageHeap::search(size_t pages) {
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
         Span* root = &m_pageSpans[i];
         if (!root->empty()) {
-            Span* span = root->next();
-
-            span->remove();
-            result = span->carve(pages);
-            merge(span);
-            if (span != result) {
-                merge(result);
-            }
+            result = root->next();
             break;
         }
     }
 
     // Search in large spans.
     if (!result) {
-        for (Span* span = m_span.next(); span != nullptr; span = span->next()) {
+        for (Span* span = m_largeSpan.next(); span != nullptr; span = span->next()) {
             if (span->pages() >= pages) {
                 if (!result
                     || span->pages() < result->pages()
                     || (span->pages() == result->pages() && span < result)
                     ) {
                     result = span;
-                    ASSERT(!result->inUse());
                 }
             }
         }
     }
+
     if (result) {
+        ASSERT(!result->inUse());
+        result->remove();
         Span* s = result->carve(pages);
+        ASSERT(s->pages() == pages);
         PageMap::store(s);
+        merge(s);
         if (s != result) {
             PageMap::store(result);
+            merge(result);
         }
 
         result = s;
@@ -87,7 +85,7 @@ void PageHeap::merge(Span* span) {
     if (span->pages() <= MAX_PAGES) {
         m_pageSpans[span->pages() - 1].prepend(span);
     } else {
-        m_span.prepend(span);
+        m_largeSpan.prepend(span);
     }
 }
 
@@ -111,7 +109,31 @@ Span* PageHeap::alloc(size_t pages) {
     return result;
 }
 
-void PageHeap::free(Span* span) {
+bool PageHeap::free(Span* span) {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    // span should not exist in our lists
+    // thus span->next()/prev() must not be called.
+
+    const uintptr_t pageID = PageMap::key(span);
+    const size_t pages = span->pages();
+
+    Span* prev = PageHeap::span(pageID - 1);
+    if (prev && prev->inUse() == false) {
+        ASSERT(PageMap::key(prev) + prev->pages() == pageID);
+        prev->remove();
+        prev->setPages(prev->pages() + pages);
+        span = prev;
+    }
+
+    Span* next = PageHeap::span(pageID + pages);
+    if (next && next->inUse() == false) {
+        ASSERT(PageMap::key(next) == pageID + pages);
+        next->remove();
+        span->setPages(span->pages() + next->pages());
+    }
+
+    return sys_free(span, pagesToBytes(span->pages()));
 }
 
 

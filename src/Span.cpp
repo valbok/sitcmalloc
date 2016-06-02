@@ -78,6 +78,7 @@ size_t Span::split(size_t size, size_t sizeClass, Block** start, Block** end) {
     size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size, end);
     m_sizeClass = sizeClass & 0b1111111;
     *start = result;
+
     return num;
 }
 

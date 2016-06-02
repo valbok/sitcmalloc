@@ -24,10 +24,14 @@ public:
     /**
      *
      */
-    void free(Span*);
+    bool free(Span*);
 
     static inline Span* span(void* ptr) {
         return reinterpret_cast<Span*>(PageMap::get(ptr));
+    }
+
+    static inline Span* span(uintptr_t key) {
+        return reinterpret_cast<Span*>(PageMap::get(key));
     }
 
     static PageHeap& instance() {
@@ -45,13 +49,9 @@ private:
     void merge(Span*);
 
     Span m_pageSpans[MAX_PAGES];
-    Span m_span;
-    Span m_tail;
-
+    Span m_largeSpan;
 
     std::mutex m_mutex;
-
-
 };
 
 

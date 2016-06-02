@@ -28,20 +28,23 @@ void* ThreadCache::alloc(size_t size) {
 
 bool ThreadCache::free(void* ptr) {
     Span* span = PageHeap::span(ptr);
-    if (span == nullptr) {
+    if (!span) {
         return false;
     }
 
     const size_t sizeClass = span->sizeClass();
     FreeList& root = m_list[sizeClass];
-    root.prepend(1, reinterpret_cast<Block*>(ptr), nullptr);
+    const size_t numToPrepend = 1;
+    Block* start = reinterpret_cast<Block*>(ptr);
+    Block* end = nullptr;
+
+    root.prepend(numToPrepend, start, end);
     if (root.returned()) {
         CentralCache::instance(classToSize(sizeClass)).free(span);
         root.clear();
     }
 
     return true;
-
 }
 
 }  // namespace sitcmalloc

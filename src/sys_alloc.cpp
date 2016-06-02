@@ -4,6 +4,7 @@
 #include <stdint.h>                     // for uintptr_t, intptr_t
 #include <sys/mman.h>                   // for munmap, mmap, MADV_DONTNEED, etc
 #include <unistd.h>                     // for sbrk, getpagesize, off_t
+#include "common.h"
 #include <iostream>
 
 namespace sitcmalloc {
@@ -12,15 +13,7 @@ namespace {
 
 void* sbrk_alloc(size_t size) {
     void* result = sbrk(size);
-    if (result == reinterpret_cast<void*>(-1)) {
-        return NULL;
-    }
-
-    return result;
-}
-
-void* mmap_alloc(size_t size) {
-    return NULL;
+    return result != reinterpret_cast<void*>(-1) ? result : nullptr;
 }
 
 } // namespace
@@ -29,12 +22,12 @@ void* sys_alloc(size_t size) {
     return sbrk_alloc(size);
 }
 
-bool sys_free(void* start, size_t length) {
+bool sys_free(void* start, size_t size) {
     static size_t pagesize = getpagesize();
     const size_t pagemask = pagesize - 1;
 
     size_t new_start = reinterpret_cast<size_t>(start);
-    size_t end = new_start + length;
+    size_t end = new_start + size;
     size_t new_end = end;
 
     // Round up the starting address and round down the ending address
@@ -42,6 +35,11 @@ bool sys_free(void* start, size_t length) {
     new_start = (new_start + pagesize - 1) & ~pagemask;
     new_end = new_end & ~pagemask;
 
+    ASSERT((new_start & pagemask) == 0);
+    ASSERT((new_end & pagemask) == 0);
+    ASSERT(new_start >= reinterpret_cast<size_t>(start));
+    ASSERT(new_end <= end);
+  
     if (new_end > new_start) {
         int result;
         do {
