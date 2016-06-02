@@ -44,7 +44,7 @@ private:
     PageHeap(PageHeap&);
     PageHeap& operator=(const PageHeap&);
 
-    Span* search(size_t);
+    Span* fetch(size_t);
     Span* allocFromSystem(size_t);
     void merge(Span*);
 

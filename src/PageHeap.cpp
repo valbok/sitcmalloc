@@ -36,7 +36,7 @@ Span* PageHeap::allocFromSystem(size_t pages) {
     return Span::create(ptr, pages);
 }
 
-Span* PageHeap::search(size_t pages) {
+Span* PageHeap::fetch(size_t pages) {
     Span* result = nullptr;
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
         Span* root = &m_pageSpans[i];
@@ -62,17 +62,23 @@ Span* PageHeap::search(size_t pages) {
 
     if (result) {
         ASSERT(!result->inUse());
-        result->remove();
-        Span* s = result->carve(pages);
-        ASSERT(s->pages() == pages);
-        PageMap::store(s);
-        merge(s);
-        if (s != result) {
-            PageMap::store(result);
-            merge(result);
+        ASSERT(result->pages() >= pages);
+        if (result->pages() != pages) {
+            result->remove();
+            Span* s = result->carve(pages);
+            ASSERT(s->pages() == pages);
+            PageMap::store(s);
+            if (s != result) {
+                PageMap::store(result);
+                merge(result);
+            }
+
+            result = s;
+        } else {
+            result->remove();
         }
 
-        result = s;
+        result->use();
     }
 
     return result;
@@ -91,19 +97,14 @@ void PageHeap::merge(Span* span) {
 
 Span* PageHeap::alloc(size_t pages) {
     std::lock_guard<std::mutex> lock(m_mutex);
-    Span* result = search(pages);
+    Span* result = fetch(pages);
     if (!result) {
         result = allocFromSystem(pages);
         if (result) {
             PageMap::store(result);
             merge(result);
-            result = search(pages);
+            result = fetch(pages);
         }
-    }
-
-    if (result) {
-        result->use();
-        result->remove();
     }
 
     return result;
