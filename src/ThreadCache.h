@@ -16,6 +16,7 @@ public:
     static ThreadCache& instance();
     void* alloc(size_t size);
     bool free(void* ptr);
+
 private:
 	ThreadCache() {}
 	ThreadCache(const ThreadCache&) = delete;

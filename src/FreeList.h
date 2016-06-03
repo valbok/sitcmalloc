@@ -74,6 +74,11 @@ private:
     size_t m_waterline;
 };
 
+
+class LargeFreeList: public FreeList {
+
+};
+
 }  // namespace sitcmalloc
 
 #endif  // SITCMALLOC_FREE_LIST_H

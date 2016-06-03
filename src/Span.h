@@ -2,7 +2,7 @@
 #define SITCMALLOC_SPAN_H
 
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
-
+#include "common.h"
 namespace sitcmalloc {
 
 class Block;
@@ -66,8 +66,12 @@ public:
         return m_inUse;
     }
 
-    size_t sizeClass() const {
+    inline size_t sizeClass() const {
         return m_sizeClass;
+    }
+
+    inline size_t size() const {
+        return pagesToBytes(m_pages);
     }
 
     size_t split(size_t size, size_t sizeClass, Block** start, Block** end);

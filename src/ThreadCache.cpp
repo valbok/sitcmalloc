@@ -40,7 +40,7 @@ bool ThreadCache::free(void* ptr) {
 
     root.prepend(numToPrepend, start, end);
     if (root.returned()) {
-        CentralCache::instance(classToSize(sizeClass)).free(span);
+        CentralCache::instance(span->size()).free(span);
         root.clear();
     }
 

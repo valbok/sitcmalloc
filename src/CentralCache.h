@@ -13,26 +13,50 @@ namespace sitcmalloc {
  */
 class CentralCache {
 public:
+    CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}
+
     static CentralCache& instance(size_t size);
-    size_t alloc(Block** start, Block** end);
-    void free(Span*);
+    virtual size_t alloc(Block** start, Block** end) = 0;
+    virtual bool free(Span*) = 0;
+    virtual void init(size_t size) = 0;
+    virtual ~CentralCache() {}
 
-private:
-	CentralCache() : m_sizeClass(0), m_pages(0), m_size(0), m_freeSpans(0), m_maxFreeSpans(2) {}
-	CentralCache(const CentralCache&);
-	CentralCache& operator=(const CentralCache&);
+protected:
 
-	Span* fetch();
+    CentralCache(const CentralCache&) = delete;
+    CentralCache& operator=(const CentralCache&) = delete;
 
-	Span m_span;
-	size_t m_sizeClass;
-	size_t m_pages;
-	size_t m_size;
-	size_t m_freeSpans;
-	size_t m_maxFreeSpans;
-	std::mutex m_mutex;
+    Span m_span;
+    size_t m_sizeClass;
+    size_t m_pages;
+    size_t m_size;
+    std::mutex m_mutex;    
 };
 
+/**
+ *
+ */
+class CentralSmallCache : public CentralCache {
+public:
+    CentralSmallCache() : CentralCache(), m_freeSpans(0), m_maxFreeSpans(2) {}
+
+    virtual size_t alloc(Block** start, Block** end) override;
+    virtual bool free(Span*) override;
+    virtual void init(size_t size) override;
+
+protected:
+    Span* fetch();
+
+    size_t m_freeSpans;
+    size_t m_maxFreeSpans;
+};
+
+class CentralLargeCache : public CentralCache {
+public:
+    virtual size_t alloc(Block** start, Block** end) override;
+    virtual bool free(Span*) override;
+    virtual void init(size_t size) override;
+};
 
 }  // namespace sitcmalloc
 
