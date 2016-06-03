@@ -16,7 +16,7 @@
 using namespace std;
 using namespace sitcmalloc;
 
-/*TEST(ThreadCacheTest, testInstance) {
+TEST(ThreadCacheTest, testInstance) {
     ThreadCache* tc1 = nullptr;
     ThreadCache* tc2 = nullptr;
 
@@ -92,7 +92,7 @@ TEST(ThreadCacheTest, testFree) {
     EXPECT_TRUE(ThreadCache::instance().free(s3));
     EXPECT_TRUE(ThreadCache::instance().free(s4));
 }
-*/
+
 TEST(ThreadCacheTest, testFreeReturn) {
     const size_t size = MAX_CLASS_SIZE / 2;
     EXPECT_EQ(0, ThreadCache::instance().len(size));

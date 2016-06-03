@@ -12,20 +12,15 @@ ThreadCache& ThreadCache::instance() {
 }
 
 void* ThreadCache::alloc(size_t size) {
-cout <<"ThreadCache alloc size " << size << endl;
     FreeList& root = m_list[sizeToClass(size)];
     if (root.empty()) {
-        cout <<"   empty " << size << endl;
         Block *start = nullptr, *end = nullptr;
         size_t num = CentralCache::instance(size).alloc(&start, &end);
-        cout <<"  ALLOCed num=" <<num <<endl;
         if (start) {
             root.prepend(num, start, end);
         }
     }
-    void* r = root.pop();
-cout <<"pop len=" << root.len() <<": empty=" <<root.empty() << endl;
-    return r;
+    return root.pop();
 }
 
 bool ThreadCache::free(void* ptr) {    
