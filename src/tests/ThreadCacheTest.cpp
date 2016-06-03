@@ -16,7 +16,7 @@
 using namespace std;
 using namespace sitcmalloc;
 
-TEST(ThreadCacheTest, testInstance) {
+/*TEST(ThreadCacheTest, testInstance) {
     ThreadCache* tc1 = nullptr;
     ThreadCache* tc2 = nullptr;
 
@@ -78,6 +78,46 @@ TEST(ThreadCacheTest, testAllocMoreMax) {
 
 TEST(ThreadCacheTest, testFree) {
     const size_t size = 2;
-    char* s = (char*) ThreadCache::instance().alloc(size);
-    EXPECT_TRUE(ThreadCache::instance().free(s));
+    EXPECT_EQ(0, ThreadCache::instance().len(size));
+    char* s1 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(1021, ThreadCache::instance().len(size));
+    EXPECT_TRUE(ThreadCache::instance().free(s1));
+    EXPECT_EQ(1022, ThreadCache::instance().len(size));
+    char* s2 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(1021, ThreadCache::instance().len(size));
+    char* s3 = (char*) ThreadCache::instance().alloc(size);
+    char* s4 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(1019, ThreadCache::instance().len(size));
+    EXPECT_TRUE(ThreadCache::instance().free(s2));
+    EXPECT_TRUE(ThreadCache::instance().free(s3));
+    EXPECT_TRUE(ThreadCache::instance().free(s4));
+}
+*/
+TEST(ThreadCacheTest, testFreeReturn) {
+    const size_t size = MAX_CLASS_SIZE / 2;
+    EXPECT_EQ(0, ThreadCache::instance().len(size));
+    char* s1 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(6, ThreadCache::instance().len(size));
+    EXPECT_TRUE(ThreadCache::instance().free(s1));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
+    char* s2 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(6, ThreadCache::instance().len(size));
+    char* s3 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(5, ThreadCache::instance().len(size));
+    char* s4 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(4, ThreadCache::instance().len(size));
+    char* s5 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(3, ThreadCache::instance().len(size));
+    char* s6 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(2, ThreadCache::instance().len(size));
+    char* s7 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(1, ThreadCache::instance().len(size));
+    char* s8 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_EQ(0, ThreadCache::instance().len(size));
+    EXPECT_TRUE(ThreadCache::instance().empty(size));
+    
+    char* s9 = (char*) ThreadCache::instance().alloc(size);
+    EXPECT_TRUE(s9 != nullptr);
+    EXPECT_EQ(6, ThreadCache::instance().len(size));
+    EXPECT_FALSE(ThreadCache::instance().empty(size));
 }

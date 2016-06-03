@@ -178,3 +178,22 @@ TEST(SpanTest, testSplitSizeClass) {
     num = root->split(splitBy, 1, &start, &end);
     EXPECT_EQ(1, root->sizeClass());
 }
+
+TEST(SpanTest, testSplit128) {
+    const int pages = 128;
+    char a[pagesToBytes(pages)] = {0};
+    Span* root = Span::create(a, pages);
+    root->use();
+    const size_t splitBy = 131072;
+    Block* start,* end;
+    size_t num = root->split(splitBy, 0, &start, &end);
+    const size_t spanSize = sizeof(Span) - 2 * sizeof(Span*);
+    const size_t expected = (pagesToBytes(pages) - spanSize) / splitBy;
+    EXPECT_EQ(expected, num);
+    int c = 0;
+    while (start) {
+        start = start->next();
+        ++c;
+    }
+    EXPECT_EQ(num, c);
+}

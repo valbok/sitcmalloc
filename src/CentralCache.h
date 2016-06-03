@@ -53,6 +53,10 @@ protected:
 
 class CentralLargeCache : public CentralCache {
 public:
+    
+    /**
+     * @return Large class always returns only requested amount, thus it is 1.
+     */
     virtual size_t alloc(Block** start, Block** end) override;
     virtual bool free(Span*) override;
     virtual void init(size_t size) override;

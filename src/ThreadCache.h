@@ -17,10 +17,13 @@ public:
     void* alloc(size_t size);
     bool free(void* ptr);
 
+    size_t len(size_t size) const;
+    bool empty(size_t size) const;
+
 private:
-	ThreadCache() {}
-	ThreadCache(const ThreadCache&) = delete;
-	ThreadCache& operator=(const ThreadCache&) = delete;
+    ThreadCache() = default;
+    ThreadCache(const ThreadCache&) = delete;
+    ThreadCache& operator=(const ThreadCache&) = delete;
 
 	FreeList m_list[CLASSES];
 };

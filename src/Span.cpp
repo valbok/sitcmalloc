@@ -10,18 +10,15 @@ namespace sitcmalloc {
 
 const char INVALID_SIZE_CLASS = 127;
 
-Span::Span(size_t pages):
-    m_pages(pages),
-    m_sizeClass(INVALID_SIZE_CLASS),
-    m_inUse(0),
-    m_prev(nullptr),
-    m_next(nullptr) {
+Span::Span(size_t pages)
+    : m_pages(pages)
+    , m_sizeClass(INVALID_SIZE_CLASS)
+    , m_inUse(0)
+    , m_prev(nullptr)
+    , m_next(nullptr) {
 }
 
 Span* Span::create(void* p, size_t pages) {
-    if (!p) {
-        return nullptr;
-    }
     Span* result = reinterpret_cast<Span*>(p);
     result->m_pages = pages;
     result->m_sizeClass = INVALID_SIZE_CLASS;
@@ -74,7 +71,7 @@ Span* Span::carve(size_t pages) {
 
 size_t Span::split(size_t size, size_t sizeClass, Block** start, Block** end) {
     ASSERT(inUse());
-    Block* result = reinterpret_cast<Block*>(data());
+    Block* result = block();
     size_t num = result->split(reinterpret_cast<char*>(this) + pagesToBytes(m_pages), size, end);
     m_sizeClass = sizeClass & 0b1111111;
     *start = result;

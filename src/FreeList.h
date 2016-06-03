@@ -15,12 +15,13 @@ public:
     inline void prepend(size_t num, Block* start, Block* end) {
         m_len += num;
         if (m_start) {
-            m_end->next(start);
-        } else {
-            m_initLen = num;
+            m_end->setNext(start);
+        } else {            
+            m_initLen += num;
             m_start = start;
         }
         m_end = end ? end : start;
+        m_end->setNext(nullptr);
     }
 
     inline void* pop() {
@@ -35,6 +36,7 @@ public:
         if (m_start) {
             m_start = m_start->next();
         }
+
         return result;
     }
 
@@ -42,7 +44,7 @@ public:
         return m_start == nullptr;
     }
 
-    size_t length() const {
+    size_t len() const {
         return m_len;
     }
 
@@ -58,7 +60,7 @@ public:
         m_waterline = ~0;
     }
 
-    size_t initLength() const {
+    size_t initLen() const {
         return m_initLen;
     }
 

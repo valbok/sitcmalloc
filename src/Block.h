@@ -14,11 +14,12 @@ class Block {
 public:
     Block() : m_next(nullptr) {}
 
-    inline Block* next(Block* n = nullptr) {
-        if (n) {
-            m_next = n;
-        }
+    inline Block* next() const {
         return m_next;
+    }
+
+    inline void setNext(Block* block) {
+        m_next = block;
     }
 
     /**
@@ -39,6 +40,7 @@ public:
         }
         *tail = nullptr;
         *end = reinterpret_cast<Block*>(tail);
+
         ASSERT(start <= limit);
         ASSERT(*tail == nullptr);
         ASSERT((*end)->m_next == nullptr);

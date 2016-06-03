@@ -28,12 +28,14 @@ CentralCache& CentralCache::instance(size_t size) {
 
 void CentralSmallCache::init(size_t size) {
     m_size = size;
+    m_sizeClass = sizeToClass(size);
     m_pages = sizeToMinPages(m_size, 8);
     m_maxFreeSpans = 2; // todo
 }
 
 void CentralLargeCache::init(size_t size) {
     m_size = size;
+    m_sizeClass = sizeToClass(size);
     m_pages = sizeToMinPages(m_size + sizeof(Span), 1);
 }
 
@@ -53,9 +55,8 @@ size_t CentralSmallCache::alloc(Block** start, Block** end) {
     if (!span) {
         span = PageHeap::instance().alloc(m_pages);
     }
-    size_t num = span ? span->split(m_size, m_sizeClass, start, end) : 0;
 
-    return num;
+    return span ? span->split(m_size, m_sizeClass, start, end) : 0;
 }
 
 bool CentralSmallCache::free(Span* span) {
