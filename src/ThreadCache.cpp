@@ -20,6 +20,7 @@ void* ThreadCache::alloc(size_t size) {
             root.prepend(num, start, end);
         }
     }
+
     return root.pop();
 }
 
