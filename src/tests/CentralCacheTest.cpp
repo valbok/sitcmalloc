@@ -33,12 +33,14 @@ TEST(CentralCacheTest, testFetch) {
 }
 
 TEST(CentralCacheTest, testAllocLarge) {
-    CentralCache& c = CentralCache::instance(MAX_CLASS_SIZE + 1);
-    Block* b = nullptr, *end = nullptr;
-    size_t num = c.alloc(&b, &end);
-    EXPECT_TRUE(b != nullptr);
-    EXPECT_TRUE(end != nullptr);
-    EXPECT_TRUE(b->empty());
-    EXPECT_EQ(1, num);
-
+    for (int i = 1; i < 1000; ++i) {
+        CentralCache& c = CentralCache::instance(MAX_CLASS_SIZE + i);
+        Block* b = nullptr, *end = nullptr;
+        size_t num = c.alloc(&b, &end);
+        EXPECT_TRUE(b != nullptr);
+        EXPECT_TRUE(end != nullptr);
+        EXPECT_TRUE(b->empty());
+        EXPECT_EQ(1, num);
+    }
 }
+
