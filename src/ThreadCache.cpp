@@ -39,7 +39,7 @@ bool ThreadCache::free(void* ptr) {
     root.prepend(numToPrepend, start, end);
     if (root.returned()) {
         result = CentralCache::instance(span->size()).free(span);
-        root.clear();
+        root.clear();??? allocated 2 freed only 1
     }
 
     return result;
