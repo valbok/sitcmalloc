@@ -71,14 +71,3 @@ TEST(PageHeapTest, testAllocUniquePtrs) {
     }
 }
 
-TEST(PageHeapTest, testSpans) {
-    int j = 0;
-    for (size_t pages = 1000; pages > 0; pages >>= 1) {
-        Span* s = PageHeap::instance().alloc(pages);
-        for (size_t i = 0; i < pagesToBytes(pages); ++i) {
-            ++j;
-            Span* t = PageHeap::span(reinterpret_cast<void*>(s));
-        }
-    }
-    cout << j << endl;
-}
