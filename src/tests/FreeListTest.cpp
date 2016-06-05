@@ -14,7 +14,6 @@
 using namespace std;
 using namespace sitcmalloc;
 
-
 TEST(FreeListTest, testPrepend) {
     FreeList list;
     const int pages = 1;

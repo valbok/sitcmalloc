@@ -1,9 +1,13 @@
-#include "Span.h"
-#include <common.h>
-#include <iostream>
-#include "Block.h"
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
 
-using namespace std;
+#include "Span.h"
+#include "common.h"
+#include "Block.h"
 
 namespace sitcmalloc {
 

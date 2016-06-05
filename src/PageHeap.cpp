@@ -1,9 +1,15 @@
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
+
 #include "PageHeap.h"
 #include "PageMap.h"
 #include "sys_alloc.h"
 #include <unistd.h>
-#include <iostream>
-using namespace std;
+
 namespace sitcmalloc {
 
 Span* PageHeap::allocFromSystem(size_t pages) {

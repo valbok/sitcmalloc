@@ -1,3 +1,10 @@
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
+
 #ifndef SITCMALLOC_SPAN_H
 #define SITCMALLOC_SPAN_H
 
