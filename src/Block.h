@@ -1,30 +1,52 @@
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
+
 #ifndef SITCMALLOC_BLOCK_H
 #define SITCMALLOC_BLOCK_H
 
-#include <stddef.h> // for size_t, nullptr, ptrdiff_t
 #include "common.h"
-#include <iostream>
-using namespace std;
+#include <stddef.h> // for size_t, nullptr, ptrdiff_t
+
 namespace sitcmalloc {
 
 /**
- *
+ * Block or chunk of memory with originally requested size.
+ * Organized with other blocks as singly linked list.
  */
 class Block {
 public:
+
+    /**
+     * Default constructor.
+     */
     Block() : m_next(nullptr) {}
 
+    /**
+     * Returns next block in sll.
+     */
     inline Block* next() const {
         return m_next;
     }
 
+    /**
+     * Sets next block in sll.
+     */
     inline void setNext(Block* block) {
         m_next = block;
     }
 
     /**
+     * Splits memory to chunks/blocks and creates linked list.
+     *
+     * @param Last available address to stop splitting.
+     * @param Size to split by.
      * @param[out] end Pointer to last block element
      *                 which does not have any succeeding objects.
+     * @return Number of created blocks.
      */
     size_t split(void* limit, size_t size, Block** end) {
         ASSERT(size >= sizeof(Block*));
@@ -48,15 +70,21 @@ public:
         return num;
     }
 
+    /**
+     * Checks if current block does not have next elements.
+     */
     inline bool empty() const {
         return m_next == nullptr;
     }
 
 private:
 
-    Block(const Block&);
-    Block& operator=(const Block&);
+    Block(const Block&) = delete;
+    Block& operator=(const Block&) = delete;
 
+    /**
+     * Next block in SLL;
+     */
     Block* m_next;
 };
 

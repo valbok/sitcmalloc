@@ -1,13 +1,18 @@
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
 
 #include "ThreadCache.h"
 #include "CentralCache.h"
 #include "PageHeap.h"
-#include <iostream>
 
 namespace sitcmalloc {
 
 ThreadCache& ThreadCache::instance() {
-	thread_local ThreadCache result;
+    thread_local ThreadCache result;
     return result;
 }
 

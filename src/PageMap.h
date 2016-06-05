@@ -13,6 +13,10 @@
 #include "sys_alloc.h"
 #include <stddef.h> // for size_t, nullptr, ptrdiff_t
 
+#ifndef __x86_64__
+#error System not supported
+#endif
+
 namespace sitcmalloc {
 
 /**

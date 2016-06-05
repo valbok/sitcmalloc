@@ -1,15 +1,23 @@
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
+
 #ifndef SITCMALLOC_COMMON_H
 #define SITCMALLOC_COMMON_H
 
 #include <stddef.h> // for size_t, NULL, ptrdiff_t
 #include <stdint.h>
+#include <cstdlib>
 #include <cstdio>
-#include <iostream>
-
-#include <assert.h>
 
 namespace sitcmalloc {
 
+/**
+ * Custom assert
+ */
 inline void _assert(const char* expression, const char* file, int line) {
     fprintf(stderr, "Assertion '%s' failed: %s:%d\n", expression, file, line);
     abort();
@@ -18,14 +26,28 @@ inline void _assert(const char* expression, const char* file, int line) {
 #if defined NDEBUG && NDEBUG
 #define ASSERT(EXPRESSION) ((void)0)
 #else
-#define ASSERT(x)  (x) ? (void)0 : _assert(#x, __FILE__, __LINE__)
+#define ASSERT(x) (x) ? (void)0 : _assert(#x, __FILE__, __LINE__)
 #endif
 
+/**
+ * Number of bits in one page: 1 << PAGE_SHIFT
+ */
 static const size_t PAGE_SHIFT = 13;
+
+/**
+ * Number of maximum pages operated.
+ */
 static const size_t MAX_PAGES = 1 << (20 - PAGE_SHIFT);
+
+/**
+ * Number of minimum allocated pages by one probe.
+ */
 static const size_t MIN_ALLOCATED_PAGES = MAX_PAGES;
 
-
+/**
+ * Lookup table of size classes.
+ * For example size 15 belongs to class 2 with size 16.
+ */
 static const size_t classSizes[] = {
     0,      8,      16,     32,     48,     64,     80,     96,
     112,    128,    144,    160,    176,    192,    208,    224,
@@ -39,14 +61,31 @@ static const size_t classSizes[] = {
     139264, 147456, 155648, 163840, 172032, 180224, 188416, 196608,
     204800, 212992, 221184, 229376, 237568, 245760, 253952, 262144};
 
+/**
+ * Total number of classes.
+ */
 static const size_t CLASSES = sizeof(classSizes) / sizeof(classSizes[0]);
+
+/**
+ * Size of maximum class
+ */
 static const int MAX_CLASS_SIZE = classSizes[CLASSES - 1];
+
+/**
+ * Any sizes that more the maximum class size belong to "large" class.
+ */
 static const size_t LARGE_CLASS = CLASSES - 1;
 
+/**
+ * Returns bytes of pages.
+ */
 static inline size_t pagesToBytes(size_t pages) {
     return pages << PAGE_SHIFT;
 }
 
+/**
+ * Returns class of requested size.
+ */
 static inline size_t sizeToClass(size_t size) {
     int i = LARGE_CLASS;
     // todo bin search
@@ -56,10 +95,16 @@ static inline size_t sizeToClass(size_t size) {
     return i;
 }
 
+/**
+ * Returns size of requested class.
+ */
 static inline size_t classToSize(size_t sizeClass) {
     return classSizes[sizeClass + 1];
 }
 
+/**
+ * Returns number of pages that will be allocated at once.
+ */
 static inline size_t sizeToMinPages(size_t size, size_t min = 2) {
     size_t pages = 1;
     for (; pagesToBytes(pages) / size < min; ++pages) {
@@ -67,6 +112,9 @@ static inline size_t sizeToMinPages(size_t size, size_t min = 2) {
     return pages;
 }
 
+/**
+ * Returns aligned size by page.
+ */
 static inline size_t pageAligned(size_t size) {
     const size_t page = pagesToBytes(1);
     return ((size + page - 1) / page) * page;

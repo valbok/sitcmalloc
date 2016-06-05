@@ -1,3 +1,10 @@
+/**
+ * @author VaL Doroshchuk <valbok@gmail.com>
+ * @date May 2016
+ * @copyright VaL Doroshchuk
+ * @license GNU GPL v2
+ */
+
 #ifndef SITCMALLOC_CENTRAL_CACHE_H
 #define SITCMALLOC_CENTRAL_CACHE_H
 
@@ -19,7 +26,7 @@ public:
     virtual size_t alloc(Block** start, Block** end) = 0;
     virtual bool free(Span*) = 0;
     virtual void init(size_t size) = 0;
-    virtual ~CentralCache() {}
+    virtual ~CentralCache() = default;
 
 protected:
 
