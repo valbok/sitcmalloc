@@ -60,11 +60,9 @@ private:
     PageMap() = default;
 
     inline static void setSpan(Span* s, void* value) {
-        //cout << s->pages()<<":"<<s <<"-"<< s + pagesToBytes(s->pages()) <<endl;
+        uintptr_t start = reinterpret_cast<uintptr_t>(s);
         for (size_t i = 0; i < pagesToBytes(s->pages()); i += pagesToBytes(1)) {
-            uintptr_t start = reinterpret_cast<uintptr_t>(s);
             void* offset = reinterpret_cast<void*>(start + i);
-            //cout <<key(offset)<<endl;
             set(offset, value);
         }
     }
@@ -105,8 +103,9 @@ private:
     static inline void keys(uintptr_t key, uintptr_t& node, uintptr_t& leaf, uintptr_t& value) {
         node = key >> (LEAF_BITS + NODE_BITS);
         leaf = (key >> LEAF_BITS) & (NODE_SIZE - 1);
-        value = key & (LEAF_SIZE- 1);
+        value = key & (LEAF_SIZE - 1);
     }
+
     struct Leaf {
         void* values[1 << LEAF_BITS] = {nullptr};
     };

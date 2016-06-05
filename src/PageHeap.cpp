@@ -132,6 +132,7 @@ bool PageHeap::free(Span* span) {
         span->setPages(span->pages() + next->pages());
     }
 
+    PageMap::remove(span);
     return sys_free(span, pagesToBytes(span->pages()));
 }
 

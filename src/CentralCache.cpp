@@ -64,10 +64,8 @@ bool CentralSmallCache::free(Span* span) {
     bool result = true;
     m_span.prepend(span);
     if (++m_freeSpans > m_maxFreeSpans) {
-        Span* s = m_span.next();
+        Span* s = fetch();
         ASSERT(s);
-        --m_freeSpans;
-        s->remove();
         result = PageHeap::instance().free(s);
     }
 
