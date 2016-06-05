@@ -115,7 +115,7 @@ TEST(ThreadCacheTest, testFreeReturn) {
     char* s8 = (char*) ThreadCache::instance().alloc(size);
     EXPECT_EQ(0, ThreadCache::instance().len(size));
     EXPECT_TRUE(ThreadCache::instance().empty(size));
-    
+
     char* s9 = (char*) ThreadCache::instance().alloc(size);
     EXPECT_TRUE(s9 != nullptr);
     EXPECT_EQ(6, ThreadCache::instance().len(size));
@@ -126,31 +126,31 @@ TEST(ThreadCacheTest, testFreeReturn) {
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s8));
-    EXPECT_EQ(8, ThreadCache::instance().len(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s7));
-    EXPECT_EQ(9, ThreadCache::instance().len(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s6));
-    EXPECT_EQ(10, ThreadCache::instance().len(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s5));
-    EXPECT_EQ(11, ThreadCache::instance().len(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s4));
-    EXPECT_EQ(12, ThreadCache::instance().len(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s3));
-    EXPECT_EQ(13, ThreadCache::instance().len(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
     EXPECT_FALSE(ThreadCache::instance().empty(size));
 
     EXPECT_TRUE(ThreadCache::instance().free(s2));
     // All blocks are freed
-    EXPECT_EQ(0, ThreadCache::instance().len(size));
-    EXPECT_TRUE(ThreadCache::instance().empty(size));
+    EXPECT_EQ(7, ThreadCache::instance().len(size));
+    EXPECT_FALSE(ThreadCache::instance().empty(size));
 }

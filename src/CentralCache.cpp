@@ -10,7 +10,7 @@ namespace sitcmalloc {
 CentralCache& CentralCache::instance(size_t size) {
 	static CentralSmallCache list[CLASSES - 1];
     static CentralLargeCache largeCache;
-    
+
     CentralCache* result = nullptr;
     const size_t sizeClass = sizeToClass(size);
 
@@ -44,7 +44,7 @@ Span* CentralSmallCache::fetch() {
     if (span) {
         std::lock_guard<std::mutex> lock(m_mutex);
         span->remove();
-        --m_freeSpans;        
+        --m_freeSpans;
     }
 
     return span;
@@ -63,19 +63,12 @@ bool CentralSmallCache::free(Span* span) {
     std::lock_guard<std::mutex> lock(m_mutex);
     bool result = true;
     m_span.prepend(span);
-    ++m_freeSpans;
-    if (m_freeSpans > m_maxFreeSpans) {
-        const size_t delta = m_freeSpans - m_maxFreeSpans;
-        for (size_t i = 0; i < delta; ++i) {
-            Span* s = m_span.next();
-            if (s) {
-                --m_freeSpans;
-                s->remove();
-                if (PageHeap::instance().free(s) != true) {
-                    result = false;
-                }
-            }
-        }
+    if (++m_freeSpans > m_maxFreeSpans) {
+        Span* s = m_span.next();
+        ASSERT(s);
+        --m_freeSpans;
+        s->remove();
+        result = PageHeap::instance().free(s);
     }
 
     return result;

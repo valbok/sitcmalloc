@@ -74,13 +74,19 @@ public:
         return pagesToBytes(m_pages);
     }
 
+    inline unsigned freeBlock() {
+        return m_blocks > 0 ? --m_blocks : 0;
+    }
+
     size_t split(size_t size, size_t sizeClass, Block** start, Block** end);
+
 private:
     inline void* data() {
         return &m_prev;
     }
 
     size_t m_pages;
+    unsigned int m_blocks : 16;
     unsigned char m_sizeClass : 7;
     unsigned char m_inUse : 1;
     Span* m_prev;

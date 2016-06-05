@@ -8,16 +8,15 @@ using namespace std;
 
 namespace sitcmalloc {
 
-class FreeList {
-public:
+struct FreeList {
     FreeList() : m_len(0), m_initLen(0), m_start(nullptr), m_end(nullptr), m_waterline(~0) {}
 
     inline void prepend(size_t num, Block* start, Block* end) {
         m_len += num;
         if (m_start) {
             m_end->setNext(start);
-        } else {            
-            m_initLen += num;
+        } else {
+            m_initLen = num;
             m_start = start;
         }
         m_end = end ? end : start;
@@ -44,31 +43,6 @@ public:
         return m_start == nullptr;
     }
 
-    size_t len() const {
-        return m_len;
-    }
-
-    Block* end() const {
-        return m_end;
-    }
-
-    void clear() {
-        m_len = 0;
-        m_initLen = 0;
-        m_start = nullptr;
-        m_end = nullptr;
-        m_waterline = ~0;
-    }
-
-    size_t initLen() const {
-        return m_initLen;
-    }
-
-    bool returned() const {
-        return m_waterline == 0 && m_len >= m_initLen;
-    }
-
-private:
     size_t m_len;
     size_t m_initLen;
     Block* m_start;
@@ -76,10 +50,6 @@ private:
     size_t m_waterline;
 };
 
-
-class LargeFreeList: public FreeList {
-
-};
 
 }  // namespace sitcmalloc
 

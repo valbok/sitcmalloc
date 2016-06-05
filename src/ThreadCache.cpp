@@ -24,29 +24,37 @@ void* ThreadCache::alloc(size_t size) {
     return root.pop();
 }
 
-bool ThreadCache::free(void* ptr) {    
+bool ThreadCache::free(void* ptr) {
     Span* span = PageHeap::span(ptr);
     if (!span) {
         return false;
     }
 
     bool result = true;
-    FreeList& root = m_list[span->sizeClass()];
-    const size_t numToPrepend = 1;
-    Block* start = reinterpret_cast<Block*>(ptr);
-    Block* end = nullptr;
+    const size_t sizeClass = span->sizeClass();
+    if (sizeClass == LARGE_CLASS) {
+        CentralCache::instance(span->size()).free(span);
+        return result;
+    }
 
-    root.prepend(numToPrepend, start, end);
-    if (root.returned()) {
-        result = CentralCache::instance(span->size()).free(span);
-        root.clear();??? allocated 2 freed only 1
+    FreeList& root = m_list[sizeClass];
+    if (root.m_len == root.m_initLen) {
+        if (span->freeBlock() == 0) {
+            result = CentralCache::instance(span->size()).free(span);
+        }
+    } else {
+        const size_t numToPrepend = 1;
+        Block* start = reinterpret_cast<Block*>(ptr);
+        Block* end = nullptr;
+
+        root.prepend(numToPrepend, start, end);
     }
 
     return result;
 }
 
 size_t ThreadCache::len(size_t size) const {
-    return m_list[sizeToClass(size)].len();
+    return m_list[sizeToClass(size)].m_len;
 }
 
 bool ThreadCache::empty(size_t size) const {

@@ -30,7 +30,7 @@ protected:
     size_t m_sizeClass;
     size_t m_pages;
     size_t m_size;
-    std::mutex m_mutex;    
+    std::mutex m_mutex;
 };
 
 /**
@@ -53,7 +53,7 @@ protected:
 
 class CentralLargeCache : public CentralCache {
 public:
-    
+
     /**
      * @return Large class always returns only requested amount, thus it is 1.
      */
