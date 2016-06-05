@@ -197,12 +197,12 @@ private:
     unsigned char m_inUse : 1;
 
     /**
-     * Previous span in double linked list.
+     * Previous span in doubly linked list.
      */
     Span* m_prev;
 
     /**
-     * Next span in double linked list.
+     * Next span in doubly linked list.
      */
     Span* m_next;
 };
