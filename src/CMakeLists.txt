@@ -4,5 +4,6 @@ add_library(sitcmalloc SHARED
     Span.cpp
     CentralCache.cpp
     ThreadCache.cpp
+    sitcmalloc.cpp
 )
 

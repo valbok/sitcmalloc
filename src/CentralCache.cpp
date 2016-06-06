@@ -4,7 +4,6 @@
 #include "common.h"
 #include "Block.h"
 
-#include <iostream>
 namespace sitcmalloc {
 
 CentralCache& CentralCache::instance(size_t size) {
