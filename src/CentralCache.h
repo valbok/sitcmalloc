@@ -99,12 +99,23 @@ class CentralSmallCache : public CentralCache {
 public:
 
     /**
-     * Default ctor.
+     * @copydoc CentralCache::CentralCache()
      */
     CentralSmallCache() : CentralCache(), m_freeSpans(0), m_maxFreeSpans(2) {}
 
+    /**
+     * @copydoc CentralCache::alloc(Block**,Block**)
+     */
     virtual size_t alloc(Block** start, Block** end) override;
+
+    /**
+     * @copydoc CentralCache::free(Span*)
+     */
     virtual bool free(Span*) override;
+
+    /**
+     * @copydoc CentralCache::init(size_t)
+     */
     virtual void init(size_t size) override;
 
 protected:
@@ -134,10 +145,19 @@ class CentralLargeCache : public CentralCache {
 public:
 
     /**
+     * @copydoc CentralCache::alloc()
      * @return Large class always returns only requested amount, thus it is 1.
      */
     virtual size_t alloc(Block** start, Block** end) override;
+
+    /**
+     * @copydoc CentralCache::free(Span*)
+     */
     virtual bool free(Span*) override;
+
+    /**
+     * @copydoc CentralCache::init(size_t)
+     */
     virtual void init(size_t size) override;
 };
 
