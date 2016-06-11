@@ -25,10 +25,9 @@ using namespace sitcmalloc;
 #endif
 
 void* operator new(size_t size) throw (std::bad_alloc)
-    ALIAS(_malloc);
+    ALIAS(_new);
 void operator delete(void* p) throw()
-    ALIAS(_free);
-  /*
+    ALIAS(_delete);
 void* operator new[](size_t size) throw (std::bad_alloc)
     ALIAS(_new_array);
 void operator delete[](void* p) throw()
@@ -40,7 +39,7 @@ void* operator new[](size_t size, const std::nothrow_t& nt) throw()
 void operator delete(void* p, const std::nothrow_t& nt) throw()
     ALIAS(_delete_nothrow);
 void operator delete[](void* p, const std::nothrow_t& nt) throw()
-    ALIAS(_delete_array_nothrow);*/
+    ALIAS(_delete_array_nothrow);
 
 extern "C" {
   /*void* malloc(size_t size) __THROW
