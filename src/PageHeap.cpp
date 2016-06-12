@@ -127,6 +127,7 @@ bool PageHeap::free(Span* span) {
     if (prev && prev->inUse() == false) {
         ASSERT(PageMap::key(prev) + prev->pages() == pageID);
         prev->remove();
+        prev->free();
         prev->setPages(prev->pages() + pages);
         span = prev;
     }
@@ -135,10 +136,13 @@ bool PageHeap::free(Span* span) {
     if (next && next->inUse() == false) {
         ASSERT(PageMap::key(next) == pageID + pages);
         next->remove();
+        next->free();
         span->setPages(span->pages() + next->pages());
     }
 
+    span->free();
     PageMap::remove(span);
+
     return sys_free(span, pagesToBytes(span->pages()));
 }
 

@@ -125,7 +125,8 @@ public:
     }
 
     /**
-     * @return true if the span is under using.
+     * @return true if the span has been allocated from PageHeap
+     *              to higher level.
      */
     inline bool inUse() const {
         return m_inUse;
@@ -139,10 +140,10 @@ public:
     }
 
     /**
-     * @return Size of the span in bytes.
+     * @return Size of the one block of span.
      */
     inline size_t size() const {
-        return pagesToBytes(m_pages);
+        return m_sizeClass < CLASSES - 1 ? classToSize(m_sizeClass) : 0;
     }
 
     /**

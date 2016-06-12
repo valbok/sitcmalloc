@@ -37,7 +37,6 @@ Span* Span::create(void* p, size_t pages) {
 
 void Span::prepend(Span* span) {
     ASSERT(span);
-    ASSERT(!span->inUse());
 
     span->m_next = m_next;
     span->m_prev = this;
