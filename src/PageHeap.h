@@ -57,6 +57,14 @@ public:
         return result;
     }
 
+    /**
+     * Returns size of previously allocated memory by pointer.
+     */
+    static size_t size(void* ptr) {
+        Span* s = span(ptr);
+        return s ? s->blockSize() : 0;
+    }
+
 private:
     PageHeap() = default;
     PageHeap(PageHeap&) = delete;

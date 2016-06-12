@@ -38,14 +38,14 @@ bool ThreadCache::free(void* ptr) {
     bool result = true;
     const size_t sizeClass = span->sizeClass();
     if (sizeClass == LARGE_CLASS) {
-        CentralCache::instance(span->size()).free(span);
+        CentralCache::instance(span->blockSize()).free(span);
         return result;
     }
 
     FreeList& root = m_list[sizeClass];
     if (root.m_len == root.m_initLen) {
         if (span->freeBlock() == 0) {
-            result = CentralCache::instance(span->size()).free(span);
+            result = CentralCache::instance(span->blockSize()).free(span);
         }
     } else {
         const size_t numToPrepend = 1;

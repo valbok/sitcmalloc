@@ -87,14 +87,10 @@ void* _realloc(void* ptr, size_t new_size) noexcept {
         return nullptr;
     }
 
-    Span* s = PageHeap::span(ptr);
-    if (!s) {
-        return nullptr;
-    }
-
     void* result = ptr;
-    size_t old_size = s->size();
+    size_t old_size = PageHeap::size(ptr);
     if (new_size > old_size) {
+        _free(ptr);
         result = _malloc(new_size);
     }
 
@@ -116,8 +112,7 @@ void* _calloc(size_t n, size_t item_size) noexcept {
 }
 
 size_t _malloc_size(void* ptr) noexcept {
-    Span* s = PageHeap::span(ptr);
-    return s ? s->size() : 0;
+    return PageHeap::size(ptr);
 }
 
 int _mallopt(int cmd, int value) noexcept {

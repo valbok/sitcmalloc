@@ -140,10 +140,23 @@ public:
     }
 
     /**
-     * @return Size of the one block of span.
+     * @return Size of the one block.
+     * @note Span consists of at least one block.
+     */
+    inline size_t blockSize() const {
+        if (m_sizeClass < CLASSES - 1) {
+            return classToSize(m_sizeClass);
+        }
+
+        // Large classes aligned by page size
+        return pagesToBytes(m_pages);
+    }
+
+    /**
+     * @return Size of the span.
      */
     inline size_t size() const {
-        return m_sizeClass < CLASSES - 1 ? classToSize(m_sizeClass) : 0;
+        return pagesToBytes(m_pages);
     }
 
     /**
