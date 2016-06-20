@@ -89,9 +89,11 @@ void* _realloc(void* ptr, size_t new_size) noexcept {
 
     void* result = ptr;
     size_t old_size = PageHeap::size(ptr);
+    ASSERT(old_size);
     if (new_size > old_size) {
-        _free(ptr);
         result = _malloc(new_size);
+        memcpy(result, ptr, ((old_size < new_size) ? old_size : new_size));
+        _free(ptr);
     }
 
     return result;
@@ -137,6 +139,7 @@ void* _pvalloc(size_t size) noexcept {
     if (s_pagesize == 0) {
         s_pagesize = getpagesize();
     }
+
     // pvalloc(0) should allocate one page
     if (size == 0) {
         size = s_pagesize;
@@ -149,10 +152,24 @@ void* _pvalloc(size_t size) noexcept {
 }
 
 void* _memalign(size_t align, size_t size) noexcept {
+    if (size + align < size) {
+        return nullptr;
+    }
+
+    void* p = _malloc(size + align);
+    uintptr_t n = reinterpret_cast<uintptr_t>(p);
+    size_t i = 0;
+    while (((n + i) & (align - 1)) != 0 && i <= align) {
+        ++i;
+    }
+
+    if (((n + i) & (align - 1)) == 0) {
+        return reinterpret_cast<void*>(n+i);
+    }
+
     ASSERT(0); // todo
     return nullptr;
 }
-
 
 } // extern "C"
 

@@ -126,7 +126,7 @@ private:
      */
     inline static void setSpan(Span* s, void* value) {
         uintptr_t start = reinterpret_cast<uintptr_t>(s);
-        for (size_t i = 0; i < pagesToBytes(s->pages()); i += pagesToBytes(1)) {
+        for (size_t i = 0; i < pagesToBytes(s->pages()); i += PAGE_SIZE) {
             void* offset = reinterpret_cast<void*>(start + i);
             set(offset, value);
         }

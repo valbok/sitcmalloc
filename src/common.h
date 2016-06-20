@@ -35,6 +35,11 @@ inline void _assert(const char* expression, const char* file, int line) {
 static const size_t PAGE_SHIFT = 13;
 
 /**
+ * Defines size of one page.
+ */
+static const size_t PAGE_SIZE = 1 << PAGE_SHIFT;
+
+/**
  * Number of maximum pages operated.
  */
 static const size_t MAX_PAGES = 1 << (20 - PAGE_SHIFT);
@@ -84,6 +89,13 @@ static inline size_t pagesToBytes(size_t pages) {
 }
 
 /**
+ * Returns pages by size.
+ */
+static inline size_t sizeToPages(size_t size) {
+    return (size >> PAGE_SHIFT) + ((size & (PAGE_SIZE - 1)) > 0 ? 1 : 0);
+}
+
+/**
  * Returns class of requested size.
  */
 static inline size_t sizeToClass(size_t size) {
@@ -116,8 +128,7 @@ static inline size_t sizeToMinPages(size_t size, size_t min = 2) {
  * Returns aligned size by page.
  */
 static inline size_t pageAligned(size_t size) {
-    const size_t page = pagesToBytes(1);
-    return ((size + page - 1) / page) * page;
+    return ((size + PAGE_SIZE - 1) / PAGE_SIZE) * PAGE_SIZE;
 }
 
 }  // namespace sitcmalloc

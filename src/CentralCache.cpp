@@ -41,7 +41,6 @@ void CentralLargeCache::init(size_t size) {
 Span* CentralSmallCache::fetch() {
     Span* span = m_span.next();
     if (span) {
-        std::lock_guard<std::mutex> lock(m_mutex);
         span->remove();
         --m_freeSpans;
     }
@@ -50,6 +49,7 @@ Span* CentralSmallCache::fetch() {
 }
 
 size_t CentralSmallCache::alloc(Block** start, Block** end) {
+    std::lock_guard<std::mutex> lock(m_mutex);
     Span* span = fetch();
     if (!span) {
         span = PageHeap::instance().alloc(m_pages);

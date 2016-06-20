@@ -18,7 +18,7 @@ Span* PageHeap::allocFromSystem(size_t pages) {
 	}
 
     size_t size = pagesToBytes(pages);
-    size_t alignment = pagesToBytes(1);
+    const size_t alignment = PAGE_SIZE;
     size = ((size + alignment - 1) / alignment) * alignment;
     void* ptr = sys_alloc(size);
     uintptr_t n = reinterpret_cast<uintptr_t>(ptr);

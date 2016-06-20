@@ -30,8 +30,10 @@ void* ThreadCache::alloc(size_t size) {
 }
 
 bool ThreadCache::free(void* ptr) {
-    Span* span = PageHeap::span(ptr);
+    Span* span = ptr ? PageHeap::span(ptr) : nullptr;
     if (!span) {
+        ASSERT(ptr == span);
+
         return false;
     }
 
