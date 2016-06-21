@@ -7,22 +7,17 @@
 namespace sitcmalloc {
 
 CentralCache& CentralCache::instance(size_t size) {
-	static CentralSmallCache list[CLASSES - 1];
-    static CentralLargeCache largeCache;
-
-    CentralCache* result = nullptr;
     const size_t sizeClass = sizeToClass(size);
-
     if (sizeClass == LARGE_CLASS) {
+        static CentralLargeCache largeCache;
         largeCache.init(pageAligned(size));
-        result = &largeCache;
-    } else {
-        CentralSmallCache& cache = list[sizeClass];
-        cache.init(classToSize(sizeClass));
-        result = &cache;
+        return largeCache;
     }
 
-    return *result;
+    static CentralSmallCache list[CLASSES - 1];
+    CentralSmallCache& cache = list[sizeClass];
+    cache.init(classToSize(sizeClass));
+    return cache;
 }
 
 void CentralSmallCache::init(size_t size) {
