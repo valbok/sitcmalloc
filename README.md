@@ -16,11 +16,11 @@ Simplified version of tcmalloc: http://goog-perftools.sourceforge.net/doc/tcmall
 
 and -std=c++11 supported.
 
-* Build
+***** Build
 
     $ cmake .; make
 
-* Usage
+***** Usage
 
     $ LD_PRELOAD="/usr/lib/libsitcmalloc.so" firefox
 
