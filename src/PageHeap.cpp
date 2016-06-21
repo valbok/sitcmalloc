@@ -13,9 +13,9 @@
 namespace sitcmalloc {
 
 Span* PageHeap::allocFromSystem(size_t pages) {
-	if (pages < MIN_ALLOCATED_PAGES) {
-    	pages = MIN_ALLOCATED_PAGES;
-	}
+    if (pages < MIN_ALLOCATED_PAGES) {
+        pages = MIN_ALLOCATED_PAGES;
+    }
 
     size_t size = pagesToBytes(pages);
     const size_t alignment = PAGE_SIZE;
