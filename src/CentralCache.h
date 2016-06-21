@@ -23,7 +23,7 @@ class CentralCache {
 public:
 
     /**
-     * Default ctor
+     * Default ctor.
      */
     CentralCache() : m_sizeClass(0), m_pages(0), m_size(0) {}
 
@@ -38,7 +38,7 @@ public:
      * Allocates proper number of bytes
      * that determined by requested size.
      * For example if cache contains 8 bytes.
-     * It returns quite few blocks. 
+     * It returns quite few blocks.
      * Each block would be 8 bytes.
      *
      * @param[out] Pointer to start chunk of memory
@@ -56,19 +56,13 @@ public:
 
     /**
      * Inits current object by size.
-     */ 
+     */
     virtual void init(size_t size) = 0;
-    virtual ~CentralCache() = default;
 
 protected:
 
     CentralCache(const CentralCache&) = delete;
     CentralCache& operator=(const CentralCache&) = delete;
-
-    /**
-     * Root object of singly-linked list of spans.
-     */
-    Span m_span;
 
     /**
      * Size class of current cache.
@@ -84,11 +78,6 @@ protected:
      * Number of bytes allocated from PageHeap based on size.
      */
     size_t m_size;
-
-    /**
-     * Synchronizes the access by few threads to current cache object.
-     */    
-    std::mutex m_mutex;
 };
 
 /**
@@ -118,6 +107,8 @@ public:
      */
     virtual void init(size_t size) override;
 
+    virtual ~CentralSmallCache() {};
+
 protected:
 
     /**
@@ -126,16 +117,26 @@ protected:
     Span* fetch();
 
     /**
+     * Root object of singly-linked list of spans.
+     */
+    Span m_span;
+
+    /**
      * Current number of spans in the list.
      */
     size_t m_freeSpans;
 
     /**
      * Number of spans that allowed to be kept in the list.
-     * If length of the list exceeds this number, 
+     * If length of the list exceeds this number,
      * needs to return objects back to PageHeap.
      */
     size_t m_maxFreeSpans;
+
+    /**
+     * Synchronizes the access by few threads to current cache object.
+     */
+    std::mutex m_mutex;
 };
 
 /**
@@ -159,6 +160,8 @@ public:
      * @copydoc CentralCache::init(size_t)
      */
     virtual void init(size_t size) override;
+
+    virtual ~CentralLargeCache() {};
 };
 
 }  // namespace sitcmalloc
