@@ -23,6 +23,9 @@ Span* PageHeap::allocFromSystem(size_t pages) {
     void* ptr = sys_alloc(size);
     uintptr_t n = reinterpret_cast<uintptr_t>(ptr);
 
+    // Need to make sure that memory is aligned properly.
+    // All spans must have page aligned addresses
+    // which required for PageMap.
     if ((n & (alignment - 1)) != 0) {
         size_t extra = alignment - (n & (alignment - 1));
         void* ptr2 = sys_alloc(extra);
@@ -44,6 +47,7 @@ Span* PageHeap::allocFromSystem(size_t pages) {
 
 Span* PageHeap::fetch(size_t pages) {
     Span* result = nullptr;
+    // Search in spans grouped by pages.
     for (unsigned i = pages - 1; i < MAX_PAGES; ++i) {
         Span* root = &m_pageSpans[i];
         if (!root->empty()) {
