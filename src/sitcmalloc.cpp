@@ -17,7 +17,7 @@ namespace sitcmalloc {
 static size_t s_pagesize = 0;
 
 void* _malloc(size_t size) noexcept {
-    return ThreadCache::instance().alloc(size);
+    return size ? ThreadCache::instance().alloc(size) : nullptr;
 }
 
 void _free(void* p) noexcept {
