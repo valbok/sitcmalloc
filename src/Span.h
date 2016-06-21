@@ -173,10 +173,10 @@ public:
 
     /**
      * Splits current span by size.
-     * Creats single linked list of blocks.
+     * Creates single linked list of blocks.
      * Before: |------------------|
      *          size size size
-     * After   1----2----3----4---|
+     * After:  1----2----3----4---|
      * There are 4 blocks: 1 points to 2, 2 -> 3, 3 -> 4 and 4 -> nullptr
      *
      * @param Size to split by.
