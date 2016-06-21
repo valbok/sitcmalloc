@@ -78,16 +78,16 @@ TEST(ThreadCacheTest, testAllocMoreMax) {
 
 TEST(ThreadCacheTest, testFree) {
     const size_t size = 2;
-    EXPECT_EQ(0, ThreadCache::instance().len(size));
+    EXPECT_EQ(1011, ThreadCache::instance().len(size));
     char* s1 = (char*) ThreadCache::instance().alloc(size);
-    EXPECT_EQ(1021, ThreadCache::instance().len(size));
+    EXPECT_EQ(1010, ThreadCache::instance().len(size));
     EXPECT_TRUE(ThreadCache::instance().free(s1));
-    EXPECT_EQ(1022, ThreadCache::instance().len(size));
+    EXPECT_EQ(1011, ThreadCache::instance().len(size));
     char* s2 = (char*) ThreadCache::instance().alloc(size);
-    EXPECT_EQ(1021, ThreadCache::instance().len(size));
+    EXPECT_EQ(1010, ThreadCache::instance().len(size));
     char* s3 = (char*) ThreadCache::instance().alloc(size);
     char* s4 = (char*) ThreadCache::instance().alloc(size);
-    EXPECT_EQ(1019, ThreadCache::instance().len(size));
+    EXPECT_EQ(1008, ThreadCache::instance().len(size));
     EXPECT_TRUE(ThreadCache::instance().free(s2));
     EXPECT_TRUE(ThreadCache::instance().free(s3));
     EXPECT_TRUE(ThreadCache::instance().free(s4));
