@@ -28,3 +28,7 @@ and -std=c++11 supported.
 
     $ LD_PRELOAD="/usr/lib/libsitcmalloc.so" firefox
 
+Known issues:
+- Segfaults could be observed on multithreading/glib/gstreamer.
+- Some issues with freeing memory chunks to Central Cache.
+- Using inheriting and virtual methods in CentralCache could cause "ubnormal/not expected" behaviour.
