@@ -10,8 +10,8 @@ Simplified version of tcmalloc: http://goog-perftools.sourceforge.net/doc/tcmall
 - Only GCC distributions.
 - No mmap or /dev/mem allocators, only sbrk is supported.
 - No sizemap with its magic.
-- No additional allocators for internal needs expect for Radix Tree nodes.
-- No special memory alignment expect spans aligned by pages and memalign().
+- No additional allocators for internal needs except for Radix Tree nodes.
+- No special memory alignment except spans aligned by pages and memalign().
 - And no other really useful needed features from tcmalloc.
 
 and -std=c++11 supported.
